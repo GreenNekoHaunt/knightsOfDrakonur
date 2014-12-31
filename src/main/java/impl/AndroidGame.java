@@ -20,6 +20,10 @@ import com.kod.knightsofdrakonur.framework.Graphics;
 import com.kod.knightsofdrakonur.framework.Input;
 import com.kod.knightsofdrakonur.framework.Screen;
 
+import java.util.Locale;
+
+import src.entity.Player;
+
 public abstract class AndroidGame extends Activity implements Game
 {
     AndroidFastRenderView renderView;
@@ -28,6 +32,8 @@ public abstract class AndroidGame extends Activity implements Game
     Input input;
     FileIO fileIO;
     Screen screen;
+    Locale lang;
+    Player player;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -82,6 +88,13 @@ public abstract class AndroidGame extends Activity implements Game
     }
 
     @Override
+    public void onBackPressed()
+    {
+        //super.onBackPressed();
+        screen.onBackPressed();
+    }
+
+    @Override
     public Input getInput()
     {
         return input;
@@ -120,6 +133,22 @@ public abstract class AndroidGame extends Activity implements Game
         this.screen = screen;
     }
 
+    @Override
+    public void setLocale(Locale locale)
+    {
+        this.lang = locale;
+    }
+
+    @Override
+    public Locale getLocale()
+    {
+        if(this.lang == null)
+        {
+            return Locale.ENGLISH;
+        }
+        return this.lang;
+    }
+
     public Screen getCurrentScreen()
     {
         return screen;
@@ -128,5 +157,23 @@ public abstract class AndroidGame extends Activity implements Game
     public int getRotation()
     {
         return getResources().getConfiguration().orientation;
+    }
+
+    @Override
+    public void finishGame()
+    {
+        this.finish();
+    }
+
+    @Override
+    public Player getCurrentPlayer()
+    {
+        return this.player;
+    }
+
+    @Override
+    public void setCurrentPlayer(Player player)
+    {
+        this.player = player;
     }
 }

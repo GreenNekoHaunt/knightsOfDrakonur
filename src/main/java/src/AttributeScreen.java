@@ -4,29 +4,20 @@ package src;
  * Created by GreenyNeko on 11.12.2014.
  */
 
-import java.util.List;
-import java.util.Locale;
-
-import android.content.res.Configuration;
-import android.content.Context;
-import android.graphics.Paint;
-import android.text.TextPaint;
-import android.widget.Toast;
-
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
-import com.kod.knightsofdrakonur.framework.Screen;
 import com.kod.knightsofdrakonur.framework.Input.TouchEvent;
+import com.kod.knightsofdrakonur.framework.Screen;
 
-import src.entity.Player;
-import src.entity.Role;
+import java.util.List;
+
 import util.Math;
 
-public class TitleScreen extends Screen
+public class AttributeScreen extends Screen
 {
     public int ticks = 0;
 
-    public TitleScreen(Game game)
+    public AttributeScreen(Game game)
     {
         super(game);
     }
@@ -34,6 +25,7 @@ public class TitleScreen extends Screen
     @Override
     public void update(float deltaTime)
     {
+        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
         List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
@@ -42,15 +34,12 @@ public class TitleScreen extends Screen
             TouchEvent touchEvent = touchEvents.get(i);
             if(touchEvent.type == TouchEvent.TOUCH_UP)
             {
-                if(Math.inBoundary(touchEvent, 0, 0, graphics.getWidth(), graphics.getHeight()))
+                if(Math.inBoundary(touchEvent, 0, 0, screenW, screenH))
                 {
-                    Player player = new Player(Role.MAGE);
-                    game.setCurrentPlayer(player);
-                    game.setScreen(new MenuScreen(game));
+                    game.setScreen(new CharacterScreen(game));
                 }
             }
         }
-        ticks++;
     }
 
     @Override
@@ -59,16 +48,6 @@ public class TitleScreen extends Screen
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
         graphics.clearScreen(0x459AFF);
-
-        Paint textStyle = new Paint();
-        textStyle.setARGB(250, 250, 250, 0);
-        textStyle.setTextAlign(Paint.Align.CENTER);
-        textStyle.setTextSize(32.0f);
-        textStyle.setTextLocale(game.getLocale());
-        if(ticks % 100 < 50)
-        {
-            graphics.drawString((Context)game, "lang.title.ui.tapScreen", (int) (screenW * 0.5), (int) (screenH * 0.9), textStyle);
-        }
     }
 
     @Override
@@ -92,6 +71,6 @@ public class TitleScreen extends Screen
     @Override
     public void onBackPressed()
     {
-        game.finishGame();
+        game.setScreen(new MenuScreen(game));
     }
 }

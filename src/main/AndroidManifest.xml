@@ -12,7 +12,7 @@
         <activity
             android:name="src.KnightsOfDrakonur"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/appName">
+            android:label="Knights Of Drakonur">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

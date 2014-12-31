@@ -4,6 +4,7 @@ package src;
  * Created by GreenyNeko on 11.12.2014.
  */
 
+import android.content.Context;
 import android.graphics.Paint;
 
 import com.kod.knightsofdrakonur.framework.Game;
@@ -35,7 +36,7 @@ public class MenuScreen extends Screen
             TouchEvent touchEvent = touchEvents.get(i);
             if(touchEvent.type == TouchEvent.TOUCH_UP)
             {
-                if(Math.inBoundary(touchEvent, (int)(screenW * 0.5) - ("Adventure!".length() / 18), (int)(screenH * 0.2) - 18, "Adventure!".length() * 36, 36))
+                if(Math.inBoundary(touchEvent, (int)(screenW * 0.5), (int)(screenH * 0.2) - 18, 360, 36))
                 {
                     game.setScreen(new BattleScreen(game));
                 }
@@ -60,17 +61,17 @@ public class MenuScreen extends Screen
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
-        graphics.clearScreen(0);
+        graphics.clearScreen(0x459AFF);
 
         Paint textStyle = new Paint();
         textStyle.setARGB(250, 250, 250, 250);
         textStyle.setTextAlign(Paint.Align.CENTER);
         textStyle.setTextSize(36.0f);
-        textStyle.setTextLocale(Locale.ENGLISH);
-        graphics.drawString("Adventure!", (int)(screenW * 0.5), (int)(screenH * 0.2), textStyle);
-        graphics.drawString("Character", (int)(screenW * 0.5), (int)(screenH * 0.4), textStyle);
-        graphics.drawString("Settings", (int)(screenW * 0.5), (int)(screenH * 0.6), textStyle);
-        graphics.drawString("Logout", (int)(screenW * 0.5), (int)(screenH * 0.8), textStyle);
+        textStyle.setTextLocale(game.getLocale());
+        graphics.drawString((Context)game, "lang.menu.ui.adventure", (int)(screenW * 0.5), (int)(screenH * 0.2), textStyle);
+        graphics.drawString((Context)game, "lang.menu.ui.character", (int)(screenW * 0.5), (int)(screenH * 0.4), textStyle);
+        graphics.drawString((Context)game, "lang.menu.ui.settings", (int)(screenW * 0.5), (int)(screenH * 0.6), textStyle);
+        graphics.drawString((Context)game, "lang.menu.ui.logout", (int)(screenW * 0.5), (int)(screenH * 0.8), textStyle);
     }
 
     @Override
@@ -92,8 +93,8 @@ public class MenuScreen extends Screen
     }
 
     @Override
-    public void backButton()
+    public void onBackPressed()
     {
-
+        game.setScreen(new TitleScreen(game));
     }
 }

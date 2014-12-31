@@ -1,5 +1,6 @@
 package com.kod.knightsofdrakonur.framework;
 
+import android.content.Context;
 import android.graphics.Paint;
 
 /**
@@ -22,10 +23,15 @@ public interface Graphics
 
     public void drawImage(Image image, int x, int y);
 
+    public void drawScaledImage(Image image, int x, int y, int width, int height, int srcX,
+                                int srcY, int srcWidth, int srcHeight);
+
     public void drawImage(Image image, int x, int y, int srcX, int srcY,
                           int srcWidth, int srcHeight);
 
-    void drawString(String text, int x, int y, Paint paint);
+    void drawRawString(String text, int x, int y, Paint paint);
+
+    void drawString(Context context, String id, int x, int y, Paint paint);
 
     public int getWidth();
 

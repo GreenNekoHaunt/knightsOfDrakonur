@@ -28,6 +28,7 @@ public class CharacterScreen extends Screen
     @Override
     public void update(float deltaTime)
     {
+        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
         List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
@@ -36,9 +37,17 @@ public class CharacterScreen extends Screen
             TouchEvent touchEvent = touchEvents.get(i);
             if(touchEvent.type == TouchEvent.TOUCH_UP)
             {
-                if(Math.inBoundary(touchEvent, 0, 0, graphics.getWidth(), graphics.getHeight()))
+                if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.12), 160, 256))
                 {
-                    game.setScreen(new MenuScreen(game));
+                    game.setScreen(new AttributeScreen(game));
+                }
+                else if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.37), 160, 256))
+                {
+                    game.setScreen(new SkillScreen(game));
+                }
+                else if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.62), 160, 256))
+                {
+                    game.setScreen(new EquipScreen(game));
                 }
             }
         }
@@ -49,7 +58,15 @@ public class CharacterScreen extends Screen
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
-        graphics.clearScreen(0);
+        graphics.clearScreen(0x459AFF);
+
+        graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.12));
+        graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.37));
+        graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.62));
+
+        graphics.drawImage(Assets.ui_iconAttributes, 16, (int)(screenH * 0.12) + 48);
+        graphics.drawImage(Assets.ui_iconSkills, 16, (int)(screenH * 0.37) + 48);
+        graphics.drawImage(Assets.ui_iconEquip, 16, (int)(screenH * 0.62) + 48);
     }
 
     @Override
@@ -71,8 +88,8 @@ public class CharacterScreen extends Screen
     }
 
     @Override
-    public void backButton()
+    public void onBackPressed()
     {
-
+        game.setScreen(new MenuScreen(game));
     }
 }
