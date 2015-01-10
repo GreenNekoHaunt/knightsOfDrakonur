@@ -7,6 +7,7 @@ package src;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
@@ -25,10 +26,11 @@ public class SkillScreen extends Screen
     private int internScrollBarPos = 0;
     private int realScrollBarPos = 0;
     private int scrollBarMin = 0;
-    private int scrollBarMax = (Skill.skillCount - 1) * 128;
+    private int scrollBarMax = (Skill.skillCount - 2) * 128;
     private Player player;
     private Skill dragSkill;
-    private boolean dragging;
+    private boolean dragging = false;
+    private boolean drawDragging = false;
     private int dragX;
     private int dragY;
     private int prevSlot;
@@ -67,20 +69,31 @@ public class SkillScreen extends Screen
             {
                 if(Math.inBoundary(touchEvent, 0, 0, screenW - 48, 1152))
                 {
-                    int skillSelected = ((touchEvent.y + internScrollBarPos) / 128) + 1;
-                    if(skillSelected < Skill.skillCount)
+                    int skillSelected = ((touchEvent.y + internScrollBarPos) / 128) + 2;
+                    if (skillSelected < Skill.skillCount)
                     {
-                        this.dragSkill = Skill.skills.get(skillSelected).getCopy();
-                        this.dragging = true;
-                        this.prevSlot = -1;
+                        if (player.hasSkillEquipped(Skill.skills.get(skillSelected).getCopy()))
+                        {
+                            // Inform the player that more than one skill cannot be put on the
+                            // skill bar.
+                        }
+                        else
+                        {
+                            this.dragSkill = Skill.skills.get(skillSelected).getCopy();
+                            this.dragging = true;
+                            this.prevSlot = -1;
+                        }
                     }
                 }
                 else if(Math.inBoundary(touchEvent, 0, screenH - 128, 768, 128))
                 {
-                    this.dragSkill = player.getSkillOnSlot(touchEvent.x / 128);
-                    this.dragging = true;
-                    player.setSkillSlot(touchEvent.x / 128, Skill.none);
-                    this.prevSlot = (touchEvent.x / 128);
+                    if(!player.isSlotLocked(touchEvent.x / 128))
+                    {
+                        this.dragSkill = player.getSkillOnSlot(touchEvent.x / 128);
+                        this.dragging = true;
+                        player.setSkillSlot(touchEvent.x / 128, Skill.none);
+                        this.prevSlot = (touchEvent.x / 128);
+                    }
                 }
             }
             if(touchEvent.type == TouchEvent.TOUCH_DRAGGED)
@@ -89,13 +102,17 @@ public class SkillScreen extends Screen
                 {
                     this.dragX = touchEvent.x;
                     this.dragY = touchEvent.y;
-                    if(Math.inBoundary(touchEvent, 0, screenH - 128, 768, 128))
+                    if(!player.isSlotLocked(touchEvent.x / 128))
                     {
-                        if(player.getSkillOnSlot(touchEvent.x / 128) != Skill.none)
+                        this.drawDragging = true;
+                        if(Math.inBoundary(touchEvent, 0, screenH - 128, 768, 128))
                         {
-                            player.setSkillSlot(this.prevSlot,
-                                    player.getSkillOnSlot(touchEvent.x / 128));
-                            player.setSkillSlot((touchEvent.x / 128), Skill.none);
+                            if (player.getSkillOnSlot(touchEvent.x / 128) != Skill.none)
+                            {
+                                player.setSkillSlot(this.prevSlot,
+                                        player.getSkillOnSlot(touchEvent.x / 128));
+                                player.setSkillSlot((touchEvent.x / 128), Skill.none);
+                            }
                         }
                     }
                 }
@@ -107,9 +124,17 @@ public class SkillScreen extends Screen
                 {
                     if(Math.inBoundary(touchEvent, 0, screenH - 128, 768, 128))
                     {
-                        player.setSkillSlot((touchEvent.x / 128), this.dragSkill);
+                        if(player.isSlotLocked(touchEvent.x / 128))
+                        {
+                            // Inform the player his level isn't high enough for this skill slot.
+                        }
+                        else
+                        {
+                            player.setSkillSlot((touchEvent.x / 128), this.dragSkill);
+                        }
                     }
                     this.dragging = false;
+                    this.drawDragging = false;
                 }
             }
 
@@ -148,7 +173,7 @@ public class SkillScreen extends Screen
 
         // Draw Skill list
         int x = -internScrollBarPos;
-        for(int i = 1; x < screenH - 128; i++)
+        for(int i = 2; x < screenH - 128; i++)
         {
             graphics.drawScaledImage(Assets.ui_skillBar, 0, x, screenW - 48, 128, 0, 0, 256, 128);
             // Draw Skill icons
@@ -214,7 +239,7 @@ public class SkillScreen extends Screen
                     (int)(screenH - 128) + 8, 0);
         }
 
-        if(this.dragging)
+        if(this.drawDragging)
         {
             this.dragSkill.draw(game, graphics, this.dragX, this.dragY, 0);
         }

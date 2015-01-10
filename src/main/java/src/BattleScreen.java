@@ -13,14 +13,12 @@ import com.kod.knightsofdrakonur.framework.Input.TouchEvent;
 import com.kod.knightsofdrakonur.framework.Screen;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import src.entity.ComputerPlayer;
 import src.entity.Player;
 import src.entity.Role;
 import src.skills.Skill;
-import src.skills.SkillAutoAttack;
 import util.Math;
 
 public class BattleScreen extends Screen
@@ -29,7 +27,9 @@ public class BattleScreen extends Screen
 
     private Random random = new Random();
     private Player player;
+    private ComputerPlayer[] dungeonEnemies = new ComputerPlayer[10];
     private ComputerPlayer enemy;
+    private int currentEnemy = 0;
     private int currentRound = 0;
     private int prevRound = 0;
 
@@ -37,16 +37,43 @@ public class BattleScreen extends Screen
     {
         super(game);
         player = game.getCurrentPlayer();
-        enemy = new ComputerPlayer("lang.npc.rat.name", 1, Role.MAGE);
-
-        enemy.setSkillSlot(0, Skill.scratch.getCopy());
-        enemy.setSkillSlot(1, Skill.scratch.getCopy());
-        enemy.setSkillSlot(2, Skill.scratch.getCopy());
-        enemy.setSkillSlot(3, Skill.scratch.getCopy());
-        enemy.setSkillSlot(4, Skill.scratch.getCopy());
-        enemy.setSkillSlot(5, Skill.scratch.getCopy());
+        dungeonEnemies[0] = new ComputerPlayer("lang.npc.rat.name", 1, Role.SCOUT);
+        dungeonEnemies[0].setSkillSlot(0, Skill.scratch.getCopy());
+        dungeonEnemies[0].readySkills("");
+        dungeonEnemies[1] = new ComputerPlayer("lang.npc.rat.name", 1, Role.SCOUT);
+        dungeonEnemies[1].setSkillSlot(0, Skill.scratch.getCopy());
+        dungeonEnemies[1].readySkills("");
+        dungeonEnemies[2] = new ComputerPlayer("lang.npc.bat.name", 1, Role.SCOUT);
+        dungeonEnemies[2].setSkillSlot(0, Skill.bite.getCopy());
+        dungeonEnemies[2].readySkills("");
+        dungeonEnemies[3] = new ComputerPlayer("lang.npc.rat.name", 1, Role.SCOUT);
+        dungeonEnemies[3].setSkillSlot(0, Skill.scratch.getCopy());
+        dungeonEnemies[3].readySkills("");
+        dungeonEnemies[4] = new ComputerPlayer("lang.npc.rat.name", 2, Role.SCOUT);
+        dungeonEnemies[4].setSkillSlot(0, Skill.scratch.getCopy());
+        dungeonEnemies[4].setSkillSlot(1, Skill.bite.getCopy());
+        dungeonEnemies[4].readySkills("");
+        dungeonEnemies[5] = new ComputerPlayer("lang.npc.rat.name", 1, Role.SCOUT);
+        dungeonEnemies[5].setSkillSlot(0, Skill.scratch.getCopy());
+        dungeonEnemies[5].readySkills("");
+        dungeonEnemies[6] = new ComputerPlayer("lang.npc.bat.name", 1, Role.SCOUT);
+        dungeonEnemies[6].setSkillSlot(0, Skill.bite.getCopy());
+        dungeonEnemies[6].readySkills("");
+        dungeonEnemies[7] = new ComputerPlayer("lang.npc.rat.name", 2, Role.SCOUT);
+        dungeonEnemies[7].setSkillSlot(0, Skill.scratch.getCopy());
+        dungeonEnemies[7].setSkillSlot(1, Skill.bite.getCopy());
+        dungeonEnemies[7].readySkills("");
+        dungeonEnemies[8] = new ComputerPlayer("lang.npc.bat.name", 2, Role.SCOUT);
+        dungeonEnemies[8].setSkillSlot(0, Skill.bite.getCopy());
+        // dungeonEnemies[8].setSkillSlot(1, Skill.lifeDrain.getCopy());
+        dungeonEnemies[8].readySkills("");
+        dungeonEnemies[9] = new ComputerPlayer("lang.npc.terantula.name", 2, Role.SCOUT);
+        //dungeonEnemies[9].setSkillSlot(0, Skill.stickyWeb.getCopy());
+        dungeonEnemies[9].setSkillSlot(1, Skill.bite.getCopy());
+        dungeonEnemies[9].readySkills("");
+        currentEnemy = 0;
+        enemy = dungeonEnemies[currentEnemy];
         player.readySkills("");
-        enemy.readySkills("");
     }
 
     @Override
@@ -147,7 +174,12 @@ public class BattleScreen extends Screen
 
         if(player.isDead())
         {
+            player.revive();
             game.setScreen(new MenuScreen(game));
+        }
+        if(enemy.isDead())
+        {
+            enemy = dungeonEnemies[++this.currentEnemy];
         }
     }
 
