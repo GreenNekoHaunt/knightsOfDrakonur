@@ -23,6 +23,10 @@ public class EquipScreen extends Screen
     }
 
     @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -43,6 +47,10 @@ public class EquipScreen extends Screen
     }
 
     @Override
+    /* Called whenever the screen is updated.
+     *
+     * @param float deltaTime - the time that has passed since the last update.
+     */
     public void paint(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -51,24 +59,28 @@ public class EquipScreen extends Screen
     }
 
     @Override
+    /* Called when the activity is paused. */
     public void pause()
     {
 
     }
 
     @Override
+    /* Called when the activity is resumed. */
     public void resume()
     {
 
     }
 
     @Override
+    /* Called when the activity is disposed. */
     public void dispose()
     {
 
     }
 
     @Override
+    /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
         game.setScreen(new MenuScreen(game));

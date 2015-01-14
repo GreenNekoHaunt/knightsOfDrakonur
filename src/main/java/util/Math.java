@@ -20,6 +20,14 @@ import impl.AndroidFileIO;
 
 public class Math
 {
+    /* Returns true if the touch has been in the set rectangle.
+     *
+     * @param TouchEvent touchEvent - the touch event handler.
+     * @param int x - the x coordinate of the collision rectangle.
+     * @param int y - the y coordinate of the collision rectangle.
+     * @param int width - the width of the collision rectangle.
+     * @param int height - the height of the collision rectangle.
+     */
     public static boolean inBoundary(TouchEvent touchEvent, int x, int y, int width, int height)
     {
         if(touchEvent.x > x && touchEvent.y > y
@@ -30,6 +38,14 @@ public class Math
         return false;
     }
 
+    /* Gets the width of the String on the screen when using locales.
+     *
+     * @param Context context - the adroind content context.
+     * @param String id - the locale id for the language file.
+     * @param Paint paint - the style of the text that gets drawn.
+     *
+     * TODO: Move this function into LocaleStringBuilder maybe?
+     */
     public static float getLocaleStringWidth(Context context, String id, Paint paint)
     {
         Locale locale = paint.getTextLocale();

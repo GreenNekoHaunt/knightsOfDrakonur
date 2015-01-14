@@ -13,6 +13,11 @@ import impl.AndroidGame;
 public class KnightsOfDrakonur extends AndroidGame
 {
     @Override
+    /* Returns the screen with which the game should start
+     * and sets the default locale.
+     *
+     * @return Screen - the screen with which the game should start.
+     */
     public Screen getInitScreen()
     {
         this.setLocale(Locale.ENGLISH);

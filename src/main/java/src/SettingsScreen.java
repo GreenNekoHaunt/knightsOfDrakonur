@@ -15,6 +15,7 @@ import com.kod.knightsofdrakonur.framework.Screen;
 import java.util.List;
 import java.util.Locale;
 
+import util.LocaleStringBuilder;
 import util.Math;
 
 public class SettingsScreen extends Screen
@@ -25,6 +26,10 @@ public class SettingsScreen extends Screen
     }
 
     @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -65,6 +70,10 @@ public class SettingsScreen extends Screen
     }
 
     @Override
+    /* Called whenever the screen is updated.
+     *
+     * @param float deltaTime - the time that has passed since the last update.
+     */
     public void paint(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -77,33 +86,40 @@ public class SettingsScreen extends Screen
         textStyle.setTextAlign(Paint.Align.CENTER);
         textStyle.setTextLocale(game.getLocale());
 
-        graphics.drawString((Context)game, "lang.settings.ui.language", screenW / 2,
-                screenH / 2 - 52, textStyle);
-        graphics.drawString((Context)game, "lang.self", screenW / 2,
-                screenH / 2, textStyle);
-        graphics.drawString((Context)game, "lang.ui.back",
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.settings.ui.language")
+                        .finalizeString(), screenW / 2, screenH / 2 - 52, textStyle);
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.self").finalizeString(),
+                screenW / 2, screenH / 2, textStyle);
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.ui.back").finalizeString(),
                 screenW / 2, (int)(screenH * 0.90), textStyle);
     }
 
     @Override
+    /* Called when the activity is paused. */
     public void pause()
     {
 
     }
 
     @Override
+    /* Called when the activity is resumed. */
     public void resume()
     {
 
     }
 
     @Override
+    /* Called when the activity is disposed. */
     public void dispose()
     {
 
     }
 
     @Override
+    /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
         game.setScreen(new MenuScreen(game));

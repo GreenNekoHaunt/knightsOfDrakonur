@@ -12,6 +12,7 @@ import src.mechanic.Attribute;
 public class ComputerPlayer extends Player
 {
     private String nameId;
+    private boolean boss;
     private int level;
     private int totalHealth;
     private int totalMana;
@@ -23,6 +24,30 @@ public class ComputerPlayer extends Player
         super(role);
         this.nameId = nameId;
         this.level = level;
+        attributes.put(Attribute.ARMOR, level);
+        attributes.put(Attribute.VITALITY, level);
+        attributes.put(Attribute.RESOURCE, level);
+        if(role == Role.WARRIOR)
+        {
+            attributes.put(Attribute.STRENGTH, level);
+            attributes.put(Attribute.ENDURANCE, level);
+            attributes.put(Attribute.STANCE, level);
+            attributes.put(Attribute.ARMS, level);
+        }
+        else if(role == Role.SCOUT)
+        {
+            attributes.put(Attribute.PRECISION, level);
+            attributes.put(Attribute.DEXTERTY, level);
+            attributes.put(Attribute.SURVIVAL, level);
+            attributes.put(Attribute.INSTINCTS, level);
+        }
+        else if(role == Role.MAGE)
+        {
+            attributes.put(Attribute.AIR, level);
+            attributes.put(Attribute.WATER, level);
+            attributes.put(Attribute.FIRE, level);
+            attributes.put(Attribute.EARTH, level);
+        }
     }
 
     public ComputerPlayer(String nameId, int level, Role role, int armor, int vitality,
@@ -56,17 +81,46 @@ public class ComputerPlayer extends Player
     }
 
     @Override
+    /* Called whenever the players health reaches 0.
+     *
+     * @param Player enemy - the opponent who has killed this player.
+     */
     public void onDeath(Player player)
     {
         super.onDeath(player);
         player.receiveXp(((this.getLevel() + 1) * 7) / (player.getLevel() + 1));
     }
 
+    /* Returns the id for the language file .
+     *
+     * @return String - the id for the language file.
+     */
     public String getNameId()
     {
         return this.nameId;
     }
 
+    /* Returns if this NPC is a boss.
+     *
+     * @return boolean - whether or not this NPC is a boss.
+     */
+    public boolean isBoss()
+    {
+        return this.boss;
+    }
+
+    /* Sets this NPC as a boss. */
+    public ComputerPlayer setBoss()
+    {
+        this.boss = true;
+        return this;
+    }
+
+    /* Takes care of the AI thinking choosing the right skill to activate from it's 6.
+     *
+     * @param int round - the current round.
+     * @param Player enemy - the enemy against which the skill might be used.
+     */
     public void chooseSkill(int round, Player enemy)
     {
         // This is where the AI is handled.

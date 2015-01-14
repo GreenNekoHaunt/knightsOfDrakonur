@@ -41,6 +41,10 @@ public class SkillScreen extends Screen
     }
 
     @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
     public void update(float deltaTime)
     {
         player = game.getCurrentPlayer();
@@ -152,6 +156,10 @@ public class SkillScreen extends Screen
     }
 
     @Override
+    /* Called whenever the screen is updated.
+     *
+     * @param float deltaTime - the time that has passed since the last update.
+     */
     public void paint(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -183,23 +191,23 @@ public class SkillScreen extends Screen
                 if(skill != null)
                 {
                     skill.draw(game, graphics, 16, x + 8, 0);
-                    graphics.drawString((Context) game, skill.getNameId(), 160, x + 52,
+                    graphics.drawString(skill.getName(game), 160, x + 52,
                             titleStyle);
-                    int iconY = 168; //140 - 96 = 44
+                    int iconY = 168;
                     if(skill.getManaCost() > 0)
                     {
                         graphics.drawImage(Assets.ui_iconMana, screenW - iconY, x + 16);
-                        graphics.drawRawString(String.valueOf(skill.getManaCost()),
+                        graphics.drawString(String.valueOf(skill.getManaCost()),
                                 screenW - (iconY - 72), x + 44, iconStyle);
                         iconY += 80;
                     }
                     if(skill.getCooldown() > 0)
                     {
                         graphics.drawImage(Assets.ui_iconCooldown, screenW - iconY, x + 16);
-                        graphics.drawRawString(String.valueOf(skill.getCooldown()),
+                        graphics.drawString(String.valueOf(skill.getCooldown()),
                                 screenW - (iconY - 72), x + 44, iconStyle);
                     }
-                    graphics.drawString((Context)game, skill.getShortDescId(), 160,
+                    graphics.drawString(skill.getShortDesc(game), 160,
                             x + 92, shortDescStyle);
                 }
             }
@@ -246,24 +254,27 @@ public class SkillScreen extends Screen
     }
 
     @Override
-    public void pause()
-    {
+    /* Called when the activity is paused. */
+    public void pause() {
 
     }
 
     @Override
+    /* Called when the activity is resumed. */
     public void resume()
     {
 
     }
 
     @Override
+    /* Called when the activity is disposed. */
     public void dispose()
     {
 
     }
 
     @Override
+    /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
         game.setScreen(new MenuScreen(game));

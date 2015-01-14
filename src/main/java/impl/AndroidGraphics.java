@@ -143,53 +143,8 @@ public class AndroidGraphics implements Graphics
     }
 
     @Override
-    public void drawRawString(String text, int x, int y, Paint paint)
+    public void drawString(String text, int x, int y, Paint paint)
     {
-        canvas.drawText(text, x, y, paint);
-    }
-
-    @Override
-    public void drawString(Context context, String id, int x, int y, Paint paint)
-    {
-        Locale locale = paint.getTextLocale();
-        FileIO lang = new AndroidFileIO(context);
-        String text = id;
-
-        try
-        {
-            InputStream in = lang.readAsset("lang/" + locale.getDisplayName() + ".lang");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            while((line = reader.readLine()) != null)
-            {
-                if(line.substring(0, line.indexOf('=')).contentEquals(id))
-                {
-                    text = line.substring(line.indexOf('=') + 1);
-                }
-            }
-        }
-        catch(IOException e)
-        {
-            // IO Error
-            Log.e("KOD", "IOException occurred while trying to load language string \'" + id
-                    + "\' from language file \'lang/" + locale.getDisplayName() + ".lang\'");
-            text = id;
-        }
-        catch(NullPointerException e)
-        {
-            // No matching entry in the language file.
-            Log.e("KOD", "Couldn't find a matching entry for \'" + id + "\' from the file\'lang/"
-                    + locale.getDisplayName() + ".lang\'");
-            text = id;
-        }
-        catch(Exception e)
-        {
-            // If anything goes wrong just draw the raw string.
-            Log.e("KOD", "An error occurred while trying to load language string \'" + id
-                    + "\' from language file \'lang/" + locale.getDisplayName() + ".lang\'");
-            text = id;
-        }
-
         canvas.drawText(text, x, y, paint);
     }
 

@@ -4,7 +4,6 @@ package src;
  * Created by GreenyNeko on 11.12.2014.
  */
 
-import android.content.Context;
 import android.graphics.Paint;
 
 import com.kod.knightsofdrakonur.framework.Game;
@@ -19,6 +18,7 @@ import src.entity.ComputerPlayer;
 import src.entity.Player;
 import src.entity.Role;
 import src.skills.Skill;
+import util.LocaleStringBuilder;
 import util.Math;
 
 public class BattleScreen extends Screen
@@ -67,7 +67,7 @@ public class BattleScreen extends Screen
         dungeonEnemies[8].setSkillSlot(0, Skill.bite.getCopy());
         // dungeonEnemies[8].setSkillSlot(1, Skill.lifeDrain.getCopy());
         dungeonEnemies[8].readySkills("");
-        dungeonEnemies[9] = new ComputerPlayer("lang.npc.terantula.name", 2, Role.SCOUT);
+        dungeonEnemies[9] = new ComputerPlayer("lang.npc.tarantula.name", 2, Role.SCOUT);
         //dungeonEnemies[9].setSkillSlot(0, Skill.stickyWeb.getCopy());
         dungeonEnemies[9].setSkillSlot(1, Skill.bite.getCopy());
         dungeonEnemies[9].readySkills("");
@@ -77,6 +77,10 @@ public class BattleScreen extends Screen
     }
 
     @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -179,11 +183,22 @@ public class BattleScreen extends Screen
         }
         if(enemy.isDead())
         {
-            enemy = dungeonEnemies[++this.currentEnemy];
+            if(this.currentEnemy >= 9)
+            {
+                game.setScreen(new TitleScreen(game));
+            }
+            else
+            {
+                enemy = dungeonEnemies[++this.currentEnemy];
+            }
         }
     }
 
     @Override
+    /* Called whenever the screen is updated.
+     *
+     * @param float deltaTime - the time that has passed since the last update.
+     */
     public void paint(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -222,7 +237,7 @@ public class BattleScreen extends Screen
 
         // Fill Enemy Health
         for(int i = 0;
-            i < (int)(((double)enemy.getHealth() / (double)enemy.getTotalHealth()) * 480); i++)
+            i < (int)(((double)enemy.getHealth() / (double)enemy.getMaxHealth()) * 480); i++)
         {
             graphics.drawImage(Assets.ui_barFill,
                     (screenW / 2) - Assets.ui_barRect.getWidth() / 2 + 10 + i,
@@ -232,7 +247,7 @@ public class BattleScreen extends Screen
 
         // Fill Player Health
         for (int i = 0;
-                i < (int)(((double)player.getHealth() / (double)player.getTotalHealth()) * 395);
+                i < (int)(((double)player.getHealth() / (double)player.getMaxHealth()) * 395);
                 i++)
         {
             int height = 36;
@@ -248,7 +263,7 @@ public class BattleScreen extends Screen
         }
         // Fill Mana Bar
         for(int i = 0;
-            i < (int)(((double)player.getMana() / (double)player.getTotalMana()) * 380); i++)
+            i < (int)(((double)player.getMana() / (double)player.getMaxMana()) * 380); i++)
         {
             graphics.drawScaledImage(Assets.ui_barFill,
                     (int)(screenW * 0.02) + 12 + i, (int)(screenH * 0.83) - 30,
@@ -269,48 +284,41 @@ public class BattleScreen extends Screen
         textStyle.setTextSize(36.0f);
         textStyle.setTextLocale(game.getLocale());
         // Enemy Name and Level
-        if(enemy.getLevel() % 10 == 0)
-        {
-            graphics.drawString((Context)game,
-                    enemy.getNameId() + String.valueOf(enemy.getLevel()), screenW / 2,
-                    (int) (screenH * 0.035), textStyle);
-        }
-        else
-        {
-            graphics.drawString((Context)game, enemy.getNameId() + String.valueOf(enemy.getLevel()),
-                    screenW / 2, (int) (screenH * 0.035), textStyle);
-        }
+        String labelEnemyName = (new LocaleStringBuilder(game).addLocaleString(enemy.getNameId()))
+                .addString(", Lvl " + String.valueOf(enemy.getLevel())).finalizeString();
+        graphics.drawString(labelEnemyName, screenW / 2,
+                (int) (screenH * 0.035), textStyle);
+
         //     Enemy Health
-        graphics.drawRawString(
-                String.valueOf(enemy.getHealth()) + "/" + String.valueOf(enemy.getTotalHealth()),
+        graphics.drawString(
+                String.valueOf(enemy.getHealth()) + "/" + String.valueOf(enemy.getMaxHealth()),
                 screenW / 2, (int) (screenH * 0.05) + 60, textStyle);
 
 
         //     Player Xp
         textStyle.setTextSize(15);
-        graphics.drawRawString(
+        graphics.drawString(
                 String.valueOf(player.getXp()) + "/" + String.valueOf(player.getReqXp()) + "XP",
                 (int) (screenW * 0.02 + Assets.ui_barRect.getWidth() / 2),
                 (int) (screenH * 0.83) + 20, textStyle);
         //     Player Mana
         textStyle.setTextSize(24);
-        graphics.drawRawString(
-                String.valueOf(player.getMana()) + "/" + String.valueOf(player.getTotalMana()),
+        graphics.drawString(
+                String.valueOf(player.getMana()) + "/" + String.valueOf(player.getMaxMana()),
                 (int) (screenW * 0.02) + 12 + 200, (int) (screenH * 0.83) - 12, textStyle);
         //     Player Health
         textStyle.setTextSize(36);
-        graphics.drawRawString(
-                String.valueOf(player.getHealth()) + "/" + String.valueOf(player.getTotalHealth()),
+        graphics.drawString(
+                String.valueOf(player.getHealth()) + "/" + String.valueOf(player.getMaxHealth()),
                 (int)(screenW * 0.02) + (Assets.ui_barKnife.getWidth() / 2) - 64,
                 (int)(screenH * 0.83) - 48, textStyle);
         //     Player Level
         textStyle.setTextSize(36);
         textStyle.setTextAlign(Paint.Align.LEFT);
-        graphics.drawString((Context)game, "lang.battle.ui.level", (int) (screenW * 0.08),
+        String labelLevel = (new LocaleStringBuilder(game)).addLocaleString("lang.battle.ui.level")
+                .addString(" " + String.valueOf(player.getLevel())).finalizeString();
+        graphics.drawString(labelLevel, (int) (screenW * 0.08),
                 (int) (screenH * 0.75), textStyle);
-        graphics.drawRawString(String.valueOf(player.getLevel()),
-                (int)(screenW * 0.08) + 36 * 6,
-                (int)(screenH * 0.75), textStyle);
 
         // Skill Interface
         graphics.drawImage(Assets.ui_skillSlotLeft,
@@ -337,24 +345,28 @@ public class BattleScreen extends Screen
     }
 
     @Override
+    /* Called when the activity is paused. */
     public void pause()
     {
 
     }
 
     @Override
+    /* Called when the activity is resumed. */
     public void resume()
     {
 
     }
 
     @Override
+    /* Called when the activity is disposed. */
     public void dispose()
     {
 
     }
 
     @Override
+    /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
         game.setScreen(new MenuScreen(game));

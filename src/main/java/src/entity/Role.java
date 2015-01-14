@@ -27,35 +27,57 @@ public enum Role
         this.manaFactor = manaFactor;
     }
 
+    /* Returns the id of the class.
+     *
+     * @return int - the class id.
+     */
     public int getId()
     {
         return this.id;
     }
 
+    /* Returns the name of the class.
+     *
+     * @return String - the name of the class.
+     */
     public String getName()
     {
         return this.name;
     }
 
+    /* Return the id for the locale.
+     *
+     * @return String - id for the locale.
+     */
     public String getLocaleId()
     {
         return this.localeId;
     }
 
+    /* Return the factor how armor scales for this class.
+     *
+     * @return int - the factor how armor scales.
+     */
     public int getArmorFactor()
     {
         return this.armorFactor;
     }
 
+    /* Returns the factor how health scales for this class.
+     *
+     * @return int - the factor how health scales.
+     */
     public int getVitalityFactor()
     {
         return this.vitalityFactor;
     }
 
+    /* returns the factor how mana scales for this class.
+     *
+     * @return int - the factor how mana scales.
+     */
     public int getManaFactor()
     {
         return this.manaFactor;
     }
-
-
 }

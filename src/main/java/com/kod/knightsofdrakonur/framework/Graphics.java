@@ -29,9 +29,7 @@ public interface Graphics
     public void drawImage(Image image, int x, int y, int srcX, int srcY,
                           int srcWidth, int srcHeight);
 
-    void drawRawString(String text, int x, int y, Paint paint);
-
-    void drawString(Context context, String id, int x, int y, Paint paint);
+    void drawString(String text, int x, int y, Paint paint);
 
     public int getWidth();
 

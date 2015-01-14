@@ -4,7 +4,6 @@ package src;
  * Created by GreenyNeko on 11.12.2014.
  */
 
-import android.content.Context;
 import android.graphics.Paint;
 
 import com.kod.knightsofdrakonur.framework.Game;
@@ -13,8 +12,8 @@ import com.kod.knightsofdrakonur.framework.Input.TouchEvent;
 import com.kod.knightsofdrakonur.framework.Screen;
 
 import java.util.List;
-import java.util.Locale;
 
+import util.LocaleStringBuilder;
 import util.Math;
 
 public class MenuScreen extends Screen
@@ -25,6 +24,10 @@ public class MenuScreen extends Screen
     }
 
     @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -57,6 +60,10 @@ public class MenuScreen extends Screen
     }
 
     @Override
+    /* Called whenever the screen is updated.
+     *
+     * @param float deltaTime - the time that has passed since the last update.
+     */
     public void paint(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -67,32 +74,40 @@ public class MenuScreen extends Screen
         textStyle.setARGB(250, 250, 250, 250);
         textStyle.setTextAlign(Paint.Align.CENTER);
         textStyle.setTextSize(36.0f);
-        textStyle.setTextLocale(game.getLocale());
-        graphics.drawString((Context)game, "lang.menu.ui.adventure", (int)(screenW * 0.5), (int)(screenH * 0.2), textStyle);
-        graphics.drawString((Context)game, "lang.menu.ui.character", (int)(screenW * 0.5), (int)(screenH * 0.4), textStyle);
-        graphics.drawString((Context)game, "lang.menu.ui.settings", (int)(screenW * 0.5), (int)(screenH * 0.6), textStyle);
-        graphics.drawString((Context)game, "lang.menu.ui.logout", (int)(screenW * 0.5), (int)(screenH * 0.8), textStyle);
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.adventure").finalizeString(),
+                (int)(screenW * 0.5), (int)(screenH * 0.2), textStyle);
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.character").finalizeString(), (int)(screenW * 0.5), (int)(screenH * 0.4), textStyle);
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.settings").finalizeString(), (int)(screenW * 0.5), (int)(screenH * 0.6), textStyle);
+        graphics.drawString(
+                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.logout").finalizeString(), (int)(screenW * 0.5), (int)(screenH * 0.8), textStyle);
     }
 
     @Override
+    /* Called when the activity is paused. */
     public void pause()
     {
 
     }
 
     @Override
+    /* Called when the activity is resumed. */
     public void resume()
     {
 
     }
 
     @Override
+    /* Called when the activity is disposed. */
     public void dispose()
     {
 
     }
 
     @Override
+    /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
         game.setScreen(new TitleScreen(game));

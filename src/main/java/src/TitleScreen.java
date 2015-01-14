@@ -5,13 +5,8 @@ package src;
  */
 
 import java.util.List;
-import java.util.Locale;
 
-import android.content.res.Configuration;
-import android.content.Context;
 import android.graphics.Paint;
-import android.text.TextPaint;
-import android.widget.Toast;
 
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
@@ -20,6 +15,7 @@ import com.kod.knightsofdrakonur.framework.Input.TouchEvent;
 
 import src.entity.Player;
 import src.entity.Role;
+import util.LocaleStringBuilder;
 import util.Math;
 
 public class TitleScreen extends Screen
@@ -32,6 +28,10 @@ public class TitleScreen extends Screen
     }
 
     @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
     public void update(float deltaTime)
     {
         Graphics graphics = game.getGraphics();
@@ -54,6 +54,10 @@ public class TitleScreen extends Screen
     }
 
     @Override
+    /* Called whenever the screen is updated.
+     *
+     * @param float deltaTime - the time that has passed since the last update.
+     */
     public void paint(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
@@ -67,29 +71,36 @@ public class TitleScreen extends Screen
         textStyle.setTextLocale(game.getLocale());
         if(ticks % 100 < 50)
         {
-            graphics.drawString((Context)game, "lang.title.ui.tapScreen", (int) (screenW * 0.5), (int) (screenH * 0.9), textStyle);
+            graphics.drawString(
+                    (new LocaleStringBuilder(game)).addLocaleString("lang.title.ui.tapScreen")
+                            .finalizeString(), (int) (screenW * 0.5), (int) (screenH * 0.9),
+                    textStyle);
         }
     }
 
     @Override
+    /* Called when the activity is paused. */
     public void pause()
     {
 
     }
 
     @Override
+    /* Called when the activity is resumed. */
     public void resume()
     {
 
     }
 
     @Override
+    /* Called when the activity is disposed. */
     public void dispose()
     {
 
     }
 
     @Override
+    /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
         game.finishGame();
