@@ -33,5 +33,9 @@ public interface Game
 
     public Player getCurrentPlayer();
 
+    public Player getCurrentPlayer2();
+
     public void setCurrentPlayer(Player player);
+
+    public void setCurrentPlayer2(Player player);
 }

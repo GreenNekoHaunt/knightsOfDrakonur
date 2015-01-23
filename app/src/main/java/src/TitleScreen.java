@@ -44,8 +44,10 @@ public class TitleScreen extends Screen
             {
                 if(Math.inBoundary(touchEvent, 0, 0, graphics.getWidth(), graphics.getHeight()))
                 {
-                    Player player = new Player(Role.MAGE);
+                    Player player = new Player(Role.WARRIOR, "Player1");
+                    Player player2 = new Player(Role.WARRIOR, "Player2");
                     game.setCurrentPlayer(player);
+                    game.setCurrentPlayer2(player2);
                     game.setScreen(new MenuScreen(game));
                 }
             }

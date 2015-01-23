@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import src.entity.Entity;
 import src.mechanic.Attribute;
 import src.mechanic.Buff;
+import src.mechanic.DamageType;
 import util.LocaleStringBuilder;
 
 /**
@@ -27,12 +28,14 @@ public class Skill implements Cloneable
     private String shortDescId;
     private String descId;
     private boolean ready;
+    private boolean blockable;
     private int roundLastCastedIn;
     private int[] iconPos = new int[2];
     private int manaCost;
     private int cooldown;
     private Attribute attr;
     private int damage;
+    private DamageType damageType;
     private String assetPath;
 
     public static final Skill none = new Skill();
@@ -42,14 +45,14 @@ public class Skill implements Cloneable
     // Actual in-game skills
     public static Skill fireball = (new SkillStandardAttack("lang.skills.fireball.name",
             "lang.skills.fireball.desc", "lang.skills.fireball.desc.short", Attribute.FIRE, 14))
-            .setDamageFactor(1.25).setIconPath("gfx/skills/fireball.png").setManaCost(6);
+            .setDamageFactor(0.8).setIconPath("gfx/skills/fireball.png").setManaCost(4);
     public static Skill scrollOfFire = (new SkillBuff("lang.skills.scrolloffire.name",
             "lang.skills.scrolloffire.desc", "lang.skills.scrolloffire.desc.short", Attribute.FIRE,
             Buff.fireBuff, 9)).setEffectiveFactor(0).setIconPath("gfx/skills/scrollOfFire.png")
             .setCooldown(45);
     public static final Skill boltCharge = (new SkillStandardAttack("lang.skills.boltcharge.name",
             "lang.skills.boltcharge.desc", "lang.skills.boltcharge.desc.short", Attribute.AIR, 25))
-            .setDamageFactor(1.25).setIconPath("gfx/skills/boltCharge.png").setManaCost(10)
+            .setDamageFactor(0.8).setIconPath("gfx/skills/boltCharge.png").setManaCost(5)
             .setCooldown(6);
     public static final Skill scrollOfAir = (new SkillBuff("lang.skills.scrollofair.name",
             "lang.skills.scrollofair.desc", "lang.skills.scrollofair.desc.short", Attribute.AIR,
@@ -60,43 +63,53 @@ public class Skill implements Cloneable
             12)).setIconPath("gfx/skills/clearMind.png").setCooldown(6);
     public static final Skill icicles = (new SkillMultiAttack("lang.skills.icicles.name",
             "lang.skills.icicles.desc", "lang.skills.icicles.desc.short", Attribute.WATER,
-            4, 4)).setDamageFactor(0.25).setIconPath("gfx/skills/icicles.png").setManaCost(4);
+            4, 4)).setDamageFactor(0.2).setIconPath("gfx/skills/icicles.png").setManaCost(4);
     public static final Skill scrollOfWater = (new SkillBuff("lang.skills.scrollofwater.name",
             "lang.skills.scrollofwater.desc", "lang.skills.scrollofwater.desc.short",
             Attribute.WATER, Buff.waterBuff, 9)).setEffectiveFactor(0).setCooldown(45)
             .setIconPath("gfx/skills/scrollOfWater.png");
+    public static final Skill throwRocks = (new SkillCursingAttack("lang.skills.throwrocks.name",
+            "lang.skills.throwrocks.desc", "lang.skills.throwrocks.desc.short", Attribute.EARTH,
+            3, Buff.bleeding, 4)).setDamageFactor(0.25).setEffectFactor(0.12).setDurationFactor(0.06)
+            .setManaCost(6).setIconPath("gfx/skills/dummy.png");
+    public static final Skill scrollOfEarth = (new SkillBuff("lang.skills.scrollofearth.name",
+            "lang.skills.scrollofearth.desc", "lang.skills.scrollofearth.desc.short",
+            Attribute.EARTH, Buff.earthBuff, 9)).setEffectiveFactor(0).setCooldown(45)
+            .setIconPath("gfx/skills/scrollOfEarth.png");
     public static final Skill heavyStrike = (new SkillStandardAttack("lang.skills.heavystrike.name",
             "lang.skills.heavystrike.desc", "lang.skills.heavystrike.desc.short", Attribute.ARMS,
-            9)).setDamageFactor(1.25).setIconPath("gfx/skills/heavyStrike.png");
+            9)).setDamageFactor(0.8).setIconPath("gfx/skills/heavyStrike.png");
     public static final Skill arrowShot = (new SkillStandardAttack("lang.skills.arrowshot.name",
             "lang.skills.arrowshot.desc", "lang.skills.arrowshot.desc.short", Attribute.PRECISION,
-            6)).setDamageFactor(1.25).setIconPath("gfx/skills/arrowShot.png");
+            6)).setDamageFactor(0.8).setIconPath("gfx/skills/arrowShot.png");
     public static final Skill aimedShot = (new SkillStandardAttack("lang.skills.aimedshot.name",
             "lang.skills.aimedshot.desc", "lang.skills.aimedshot.desc.short", Attribute.PRECISION,
-            12)).setDamageFactor(1.25).setIconPath("gfx/skills/aimedShot.png").setCooldown(5);
+            12)).setDamageFactor(0.8).setIconPath("gfx/skills/aimedShot.png").setCooldown(5);
     public static final Skill tripleShot = (new SkillMultiAttack("lang.skills.tripleshot.name",
             "lang.skills.tripleshot.desc", "lang.skills.tripleshot.desc.short", Attribute.DEXTERTY,
-            6, 3).setDamageFactor(0.33)).setDiminishingReturns(0.33)
+            6, 3).setDamageFactor(0.50)).setDiminishingReturns(0.33)
             .setIconPath("gfx/skills/tripleShot.png").setCooldown(3);
     public static final Skill entanglement = (new SkillStun("lang.skills.entanglement.name",
             "lang.skills.entanglement.desc", "lang.skills.entanglement.desc.short",
             Attribute.SURVIVAL, 4)).setEffectiveFactor(0.25)
-            .setIconPath("gfx/skills/entanglement.png").setCooldown(6);
+            .setIconPath("gfx/skills/entanglement.png").setCooldown(30);
     public static final Skill scratch = (new SkillStandardAttack("lang.skills.scratch.name",
             "lang.skills.scratch.desc", "lang.skills.scratch.desc.short", Attribute.INSTINCTS,
             3)).setDamageFactor(1.25).setIconPath("gfx/skills/scratch.png");
     public static final Skill bite = (new SkillStandardAttack("lang.skills.bite.name",
             "lang.skills.bite.desc", "lang.skills.bite.desc.short", Attribute.INSTINCTS, 8))
-            .setDamageFactor(1.25).setIconPath("gfx/skills/bite.png");
+            .setDamageFactor(0.8).setIconPath("gfx/skills/bite.png");
     public static final Skill sandwich = (new SkillHeal("lang.skills.sandwich.name",
             "lang.skills.sandwich.desc", "lang.skills.sandwich.desc.short", Attribute.UTILITY,
-            15)).setEffectiveFactor(1.25).setIconPath("gfx/skills/sandwichTest.png")
+            15)).setEffectiveFactor(0.8).setIconPath("gfx/skills/sandwichTest.png")
             .setCooldown(30);
 
     public Skill()
     {
         this.id = skillCount++;
         this.ready = true;
+        this.blockable = true;
+        this.damageType = DamageType.DIRECT;
         skills.add(this);
     }
 
@@ -255,13 +268,16 @@ public class Skill implements Cloneable
         return (new LocaleStringBuilder(game)).addLocaleString(this.descId).finalizeString();
     }
 
-    /* Returns whether or not the skill is ready.
+    /* Returns the type of damage this skill does.
      *
-     * @return boolean - whether or not the skill is ready.
+     * @return DamageType - the type of damage.
+     *
+     * NOTE: This only allows for one primary damage type for each skill.
+     *       which means a skill cannot do physical and magical damage at the same time.
      */
-    public boolean isReady()
+    public DamageType getDamageType()
     {
-        return this.ready;
+        return this.damageType;
     }
 
     /* Returns the damage the skill does or heals.
@@ -290,6 +306,21 @@ public class Skill implements Cloneable
      * @return Attribute - the attribute.
      */
     public Attribute getAttribute() { return this.attr; }
+
+    /* Returns whether or not the skill is ready.
+     *
+     * @return boolean - whether or not the skill is ready.
+     */
+    public boolean isReady()
+    {
+        return this.ready;
+    }
+
+    /* Returns whether or not hte skill can be blocked.
+     *
+     * @return boolean - whether or not hte skill can be dodged.
+     */
+    public boolean isBlockable() { return this.blockable; }
 
     /* Returns a copy of this skill.
      *
@@ -343,11 +374,22 @@ public class Skill implements Cloneable
 
     /* Set the skill whether or not it's ready or not.
      *
+     * @param boolean ready - whether or not the skill is ready
      */
     public Skill setReady(boolean ready)
     {
         // Sets the skill ready to be casted or not.
         this.ready = ready;
+        return this;
+    }
+
+    /* Sets whether or not this skill can be blocked.
+     *
+     * @param boolean blockable - whether or not the skill is blockable
+     */
+    public Skill setBlockable(boolean blockable)
+    {
+        this.blockable = blockable;
         return this;
     }
 

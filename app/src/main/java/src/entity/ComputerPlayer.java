@@ -2,23 +2,27 @@ package src.entity;
 
 import android.util.Log;
 
+import com.kod.knightsofdrakonur.framework.Game;
+
+import java.util.Locale;
 import java.util.Random;
 
 import src.mechanic.Attribute;
+import util.LocaleStringBuilder;
 
 /**
  * Created by GreenyNeko on 23.12.2014.
  */
 public class ComputerPlayer extends Entity
 {
-    private String nameId;
     private boolean boss;
 
     public ComputerPlayer(String nameId, int level, Role role)
     {
         super(role);
-        this.nameId = nameId;
+        this.setName(nameId);
         this.setLevel(level);
+        this.revive();
         attributes.put(Attribute.ARMOR, level);
         attributes.put(Attribute.VITALITY, level);
         attributes.put(Attribute.RESOURCE, level);
@@ -44,6 +48,12 @@ public class ComputerPlayer extends Entity
             attributes.put(Attribute.FIRE, level);
             attributes.put(Attribute.EARTH, level);
         }
+
+        int resource = this.getAttributeStat(Attribute.RESOURCE) + this.baseResource;
+        int vitality = this.getAttributeStat(Attribute.VITALITY) + this.baseVitality;
+        this.setMaxMana(resource * (this.getLevel() + 1) * role.getManaFactor());
+        this.setMaxHealth(vitality * (this.getLevel() + 1) * role.getVitalityFactor());
+        this.revive();
     }
 
     public ComputerPlayer(String nameId, int level, Role role, int armor, int vitality,
@@ -75,6 +85,11 @@ public class ComputerPlayer extends Entity
             attributes.put(Attribute.FIRE, attr3);
             attributes.put(Attribute.EARTH, attr4);
         }
+        int res = this.getAttributeStat(Attribute.RESOURCE) + this.baseResource;
+        int vita = this.getAttributeStat(Attribute.VITALITY) + this.baseVitality;
+        this.setMaxMana(res * (this.getLevel() + 1) * role.getManaFactor());
+        this.setMaxHealth(vita * (this.getLevel() + 1) * role.getVitalityFactor());
+        this.revive();
     }
 
     @Override
@@ -91,13 +106,14 @@ public class ComputerPlayer extends Entity
         }
     }
 
-    /* Returns the id for the language file .
+    /* Replaces the name id  with the real name.
      *
-     * @return String - the id for the language file.
+     * @param Game game - the game handler.
      */
-    public String getNameId()
+    public void registerName(Game game)
     {
-        return this.nameId;
+        this.setName(
+                new LocaleStringBuilder(game).addLocaleString(this.getName()).finalizeString());
     }
 
     /* Returns if this NPC is a boss.

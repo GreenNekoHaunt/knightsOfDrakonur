@@ -1,13 +1,22 @@
 package src.entity;
 
+import android.graphics.Paint;
+
+import com.kod.knightsofdrakonur.framework.Game;
+import com.kod.knightsofdrakonur.framework.Graphics;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
+import src.Assets;
 import src.mechanic.ActiveBuff;
 import src.mechanic.Attribute;
 import src.mechanic.Buff;
 import src.mechanic.BuffStun;
+import src.mechanic.DamageType;
 import src.skills.Skill;
+import util.LocaleStringBuilder;
 
 /**
  * Created by GreenyNeko on 15.01.2015.
@@ -15,7 +24,16 @@ import src.skills.Skill;
 public class Entity
 {
     protected HashMap<Attribute, Integer> attributes = new HashMap<Attribute, Integer>();
+    protected final int baseResource = 6;
+    protected final int baseVitality = 56;
+    protected final int[] slotUnlocks = new int[]{1, 2, 3, 6, 8, 10};
+    private String name;
     private Role role;
+    private int critRating = 0;
+    private int blockRating = 0;
+    private int dodgeRating = 0;
+    private int critSeverityRating = 0;
+    private int armorRating = 0;
     private int level;
     private int totalHealth;
     private int totalMana;
@@ -30,11 +48,7 @@ public class Entity
     {
         this.role = role;
         this.level = 1;
-        this.totalMana = 6 * (this.level + 1) * role.getManaFactor();
-        this.mana = this.totalMana;
-        this.totalHealth = 56 * (this.level + 1) * role.getVitalityFactor();
-        this.health = this.totalHealth;
-        this.role = role;
+        this.name = "Unnamed Entity";
         for(int i = 0; i < 6; i++)
         {
             if(this.isSlotLocked(i))
@@ -85,6 +99,11 @@ public class Entity
             attributes.put(Attribute.FIRE, 1);
             attributes.put(Attribute.EARTH, 1);
         }
+        int resource = this.getAttributeStat(Attribute.RESOURCE) + this.baseResource;
+        int vitality = this.getAttributeStat(Attribute.VITALITY) + this.baseVitality;
+        this.setMaxMana(resource * (this.getLevel() + 1) * role.getManaFactor());
+        this.setMaxHealth(vitality * (this.getLevel() + 1) * role.getVitalityFactor());
+        this.revive();
     }
 
     /* Sets the max mana this entity can have.
@@ -105,6 +124,10 @@ public class Entity
         this.totalHealth = health;
     }
 
+    /* Sets the entities level.
+     *
+     * @param int level - the new level
+     */
     protected void setLevel(int level)
     {
         this.level = level;
@@ -161,7 +184,33 @@ public class Entity
     }
 
     /* Called when the entity is stunned. */
-    public void onStunned() { }
+    public void onStunned()
+    {
+    }
+
+    /* Called when the entity takes damage */
+    public void onDamageTaken(Entity who, int amount, DamageType damageType, boolean crit)
+    {
+    }
+
+    /* Called when an attack is dodged. */
+    public void onDodge()
+    {
+    }
+
+    /* Called when an attack is blocked */
+    public void onBlock()
+    {
+    }
+
+    /* Returns the entities name.
+     *
+     * @return String - the entities name.
+     */
+    public String getName()
+    {
+        return this.name;
+    }
 
     /* Returns the entities role or class.
      *
@@ -237,6 +286,52 @@ public class Entity
         return this.attributes.get(attr);
     }
 
+    /* Calculates and returns the entities armor.
+     *
+     * @return the armor.
+     */
+    public int getArmor()
+    {
+        return this.armorRating * this.getAttributeStat(Attribute.ARMOR)
+                * this.role.getArmorFactor();
+    }
+
+    /* Returns the chance that the entity critical hits.
+     *
+     * @return the critical hit chance.
+     */
+    public double getCritChance()
+    {
+        return this.critRating / (this.getLevel() + 1);
+    }
+
+    /* Returns the rate how strong the critical hits are.
+     *
+     * @return the critical hit strength rate.
+     */
+    public double getCritSeverity()
+    {
+        return this.critSeverityRating / (this.getLevel() + 1);
+    }
+
+    /* Returns the chance the entity dodges an attack.
+     *
+     * @return the dodge chance.
+     */
+    public double getDodgeChance()
+    {
+        return this.dodgeRating / (this.getLevel() + 1);
+    }
+
+    /* Returns the chance the entity blocks an attack.
+     *
+     * @return the block chance.
+     */
+    public double getBlockChance()
+    {
+        return this.blockRating / (this.getLevel() + 1);
+    }
+
     /* Returns true if the entity is dead.
      *
      * @return boolean - whether or not the entity is dead.
@@ -259,6 +354,20 @@ public class Entity
     public void setRole(Role role)
     {
         this.role = role;
+        int res = this.getAttributeStat(Attribute.RESOURCE) + this.baseResource;
+        int vita = this.getAttributeStat(Attribute.VITALITY) + this.baseVitality;
+        this.setMaxMana(res * (this.getLevel() + 1) * role.getManaFactor());
+        this.setMaxHealth(vita * (this.getLevel() + 1) * role.getVitalityFactor());
+        this.revive();
+    }
+
+    /* Sets the name of the entity.
+     *
+     * @param String name - the name the entity should be called.
+     */
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     /* Sets the skill contained in the slot.
@@ -280,6 +389,35 @@ public class Entity
     {
         this.stunned = true;
         this.applyBuff(who, Buff.stun, duration);
+    }
+
+    /* Checks whether or not the entity has the skill on in his slots.
+ *
+ * @param Skill skill - the skill which should be searched for.
+ *
+ * @return boolean - whether or not the skill is on the entities skill slots.
+ */
+    public boolean isSkillEquipped(Skill skill)
+    {
+        for(int i = 0; i < this.slots.length; i++)
+        {
+            if(this.slots[i].getId() == skill.getId())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Checks whether or not the slot is still locked.
+     *
+     * @param int slot - the slot which should be checked.
+     *
+     * @return boolean - whether or not the slot is locked.
+     */
+    public boolean isSlotLocked(int slot)
+    {
+        return this.level < slotUnlocks[slot];
     }
 
     /* Revives the entity filling his health, mana and readying his skills. */
@@ -321,6 +459,18 @@ public class Entity
         this.buffs.remove(buff);
     }
 
+    /* Makes all buffs wear off. Do not use as mechanic to remove buffs.
+     *
+     */
+    public void removeAllBuffs()
+    {
+        for(int i = 0; i < this.buffs.size(); i++)
+        {
+            this.buffs.get(i).getBuff().onWearOff(this);
+            this.buffs.remove(i);
+        }
+    }
+
     /* Makes sure all skills that are not mentioned in the except are ready.
      *
      * @param String except - can contain numbers from 0 to 5 naming which skills should be ignored.
@@ -337,58 +487,53 @@ public class Entity
         }
     }
 
-    /* Checks whether or not the entity has the skill on in his slots.
-     *
-     * @param Skill skill - the skill which should be searched for.
-     *
-     * @return boolean - whether or not the skill is on the entities skill slots.
-     */
-    public boolean hasSkillEquipped(Skill skill)
-    {
-        for(int i = 0; i < this.slots.length; i++)
-        {
-            if(this.slots[i].getId() == skill.getId())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /* Checks whether or not the slot is still locked.
-     *
-     * @param int slot - the slot which should be checked.
-     *
-     * @return boolean - whether or not the slot is locked.
-     */
-    public boolean isSlotLocked(int slot)
-    {
-        switch(slot)
-        {
-            case 5:
-                // TODO: Use constants for the unlock levels.
-                return this.level < 10;
-            case 4:
-                return this.level < 8;
-            case 3:
-                return this.level < 6;
-            case 2:
-                return this.level < 3;
-            case 1:
-                return this.level < 2;
-            default:
-                return false;
-        }
-    }
-
-    /* Deals damage to the entity.
+    /* Deals fix direct damage to the entity.
      *
      * @param Entity who - the entity who deals the damage.
      * @param int amount - the amount of the damage done.
      */
-    public void takeDamage(Entity who, int amount)
+    public void takeDamage(Entity who, int amount, DamageType damageType)
     {
         this.health -= amount;
+        onDamageTaken(who, amount, damageType, false);
+    }
+
+    /* Deals a typed damage including crit chance.
+     *
+     * @param Entity target - the target that should be attacked.
+     * @param int amount - the base amount of damage.
+     *
+     * TODO: Replace direct damage with the skills damage type.
+     */
+    public void dealDamage(Entity target, Skill skill, int amount)
+    {
+        int targetArmor = target.getArmor();
+        double resist = targetArmor / (this.getLevel() + 1);
+        Random random = new Random();
+        if(random.nextFloat() > this.getBlockChance() && skill.isBlockable())
+        {
+            if(random.nextFloat() > this.getDodgeChance())
+            {
+                if(random.nextFloat() > this.getCritChance())
+                {
+                    int damage = (int)(amount * resist * this.getCritSeverity());
+                    this.health -= damage;
+                    target.onDamageTaken(this, damage, skill.getDamageType(), true);
+                }
+                else
+                {
+                    target.takeDamage(this, (int)(amount * resist), skill.getDamageType());
+                }
+            }
+            else
+            {
+                this.onDodge();
+            }
+        }
+        else
+        {
+            this.onBlock();
+        }
     }
 
     /* Heals the entity.
@@ -459,5 +604,44 @@ public class Entity
         {
             skill.onTap(round, this, enemy);
         }
+    }
+
+    /* Draws the characters effects, interface if not the enemy.
+     *
+     * @param Game game - the game handler.
+     * @param Graphics graphics - the graphics handler.
+     */
+    public void drawAsOpponent(Game game, Graphics graphics)
+    {
+        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
+        Paint textStyle = new Paint();
+        textStyle.setARGB(250, 0, 0, 0);
+        textStyle.setTextAlign(Paint.Align.CENTER);
+        textStyle.setTextSize(36.0f);
+
+        // Enemy Health Bar
+        graphics.drawImage(Assets.ui_barRect,
+                (screenW / 2) - Assets.ui_barRect.getWidth() / 2,
+                (int) (screenH * 0.05));
+
+        // Fill Enemy Health
+        for (int i = 0;
+             i < (int) (((double) this.getHealth() / (double) this.getMaxHealth()) * 480); i++) {
+            graphics.drawImage(Assets.ui_barFill,
+                    (screenW / 2) - Assets.ui_barRect.getWidth() / 2 + 10 + i,
+                    (int) (screenH * 0.05) + 10,
+                    7, 0, 3, 76);
+        }
+        // Enemy Name and Level
+        String labelEnemyName =
+                (new LocaleStringBuilder(game).addLocaleString(this.getName()))
+                        .addString(", Lvl " + String.valueOf(this.getLevel())).finalizeString();
+        graphics.drawString(labelEnemyName, screenW / 2,
+                (int) (screenH * 0.035), textStyle);
+
+        //     Enemy Health
+        graphics.drawString(
+                String.valueOf(this.getHealth()) + "/" + String.valueOf(this.getMaxHealth()),
+                screenW / 2, (int) (screenH * 0.05) + 60, textStyle);
     }
 }

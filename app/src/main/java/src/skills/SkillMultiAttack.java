@@ -4,6 +4,7 @@ import com.kod.knightsofdrakonur.framework.Game;
 
 import src.entity.Entity;
 import src.mechanic.Attribute;
+import src.mechanic.DamageType;
 import util.LocaleStringBuilder;
 
 /**
@@ -44,6 +45,8 @@ public class SkillMultiAttack extends Skill
      * @param int round - the current round of the match.
      * @param Entity player - the player the skill belongs to.
      * @param Entity enemy - the opponent of the player.
+     *
+     * TODO: Replace hardcoded damagetype according to the skill.
      */
     public void onActivation(int round, Entity player, Entity enemy)
     {
@@ -54,12 +57,12 @@ public class SkillMultiAttack extends Skill
         {
             if(dimishingReturns == 1)
             {
-                enemy.takeDamage(player, damage);
+                enemy.takeDamage(player, damage, DamageType.DIRECT);
             }
             else
             {
                 damage *= this.dimishingReturns;
-                enemy.takeDamage(player, damage);
+                enemy.takeDamage(player, damage, DamageType.DIRECT);
             }
 
         }

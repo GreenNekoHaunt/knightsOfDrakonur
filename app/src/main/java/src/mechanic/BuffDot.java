@@ -33,10 +33,12 @@ public class BuffDot extends Buff
     /* Called when the buff effect should be done for this round.
      *
      * @param Entity target - the player the buff is active on.
+     *
+     * TODO: Replace hardcoded damage type according to the skill.
      */
     public void onTick(Entity target)
     {
-        target.takeDamage(this.getCaster(), this.getStrength());
+        target.takeDamage(this.getCaster(), this.getStrength(), DamageType.DIRECT);
     }
 
     @Override

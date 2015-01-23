@@ -11,13 +11,14 @@ import com.kod.knightsofdrakonur.framework.Screen;
 
 import java.util.List;
 
+import src.entity.Player;
 import util.Math;
 
 public class EquipScreen extends Screen
 {
-    public int ticks = 0;
+    private Player player;
 
-    public EquipScreen(Game game)
+    public EquipScreen(Game game, Player player)
     {
         super(game);
     }
@@ -40,7 +41,7 @@ public class EquipScreen extends Screen
             {
                 if(Math.inBoundary(touchEvent, 0, 0, screenW, screenH))
                 {
-                    game.setScreen(new CharacterScreen(game));
+                    game.setScreen(new CharacterScreen(game, this.player));
                 }
             }
         }

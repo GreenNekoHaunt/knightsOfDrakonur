@@ -5,6 +5,7 @@ package src;
  */
 
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 import src.entity.ComputerPlayer;
+import src.entity.Entity;
 import src.entity.Player;
 import src.entity.Role;
 import src.skills.Skill;
@@ -28,61 +30,75 @@ public class BattleScreen extends Screen
     private Random random = new Random();
     private Player player;
     private ComputerPlayer[] dungeonEnemies = new ComputerPlayer[10];
-    private ComputerPlayer enemy;
+    private Entity enemy;
     private int currentEnemy = 0;
     private int currentRound = 0;
     private int prevRound = 0;
+    private int mode = 0;
 
-    public BattleScreen(Game game)
+    public BattleScreen(Game game, int mode)
     {
         super(game);
+        this.mode = mode;
         player = game.getCurrentPlayer();
-        dungeonEnemies[0] = new ComputerPlayer("lang.npc.rat.name", 1 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[0].setSkillSlot(0, Skill.scratch.getCopy());
-        dungeonEnemies[0].readySkills("");
-        dungeonEnemies[1] = new ComputerPlayer("lang.npc.rat.name", 1 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[1].setSkillSlot(0, Skill.scratch.getCopy());
-        dungeonEnemies[1].readySkills("");
-        dungeonEnemies[2] = new ComputerPlayer("lang.npc.bat.name", 1 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[2].setSkillSlot(0, Skill.bite.getCopy());
-        dungeonEnemies[2].readySkills("");
-        dungeonEnemies[3] = new ComputerPlayer("lang.npc.rat.name", 1 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[3].setSkillSlot(0, Skill.scratch.getCopy());
-        dungeonEnemies[3].readySkills("");
-        dungeonEnemies[4] = new ComputerPlayer("lang.npc.rat.name", 2 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[4].setSkillSlot(0, Skill.scratch.getCopy());
-        dungeonEnemies[4].setSkillSlot(1, Skill.bite.getCopy());
-        dungeonEnemies[4].readySkills("");
-        dungeonEnemies[5] = new ComputerPlayer("lang.npc.rat.name", 1 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[5].setSkillSlot(0, Skill.scratch.getCopy());
-        dungeonEnemies[5].readySkills("");
-        dungeonEnemies[6] = new ComputerPlayer("lang.npc.bat.name", 1 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[6].setSkillSlot(0, Skill.bite.getCopy());
-        dungeonEnemies[6].readySkills("");
-        dungeonEnemies[7] = new ComputerPlayer("lang.npc.rat.name", 2 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[7].setSkillSlot(0, Skill.scratch.getCopy());
-        dungeonEnemies[7].setSkillSlot(1, Skill.bite.getCopy());
-        dungeonEnemies[7].readySkills("");
-        dungeonEnemies[8] = new ComputerPlayer("lang.npc.bat.name", 2 + player.getAscensions(),
-                Role.SCOUT);
-        dungeonEnemies[8].setSkillSlot(0, Skill.bite.getCopy());
-        // dungeonEnemies[8].setSkillSlot(1, Skill.lifeDrain.getCopy());
-        dungeonEnemies[8].readySkills("");
-        dungeonEnemies[9] = new ComputerPlayer("lang.npc.tarantula.name",
-                2 + player.getAscensions(), Role.SCOUT);
-        dungeonEnemies[9].setSkillSlot(0, Skill.bite.getCopy());
-        dungeonEnemies[9].readySkills("");
-        currentEnemy = 0;
-        enemy = dungeonEnemies[currentEnemy];
+        switch(mode)
+        {
+            case 1:
+                this.enemy = game.getCurrentPlayer2();
+                break;
+            default:
+                dungeonEnemies[0] = new ComputerPlayer("lang.npc.rat.name",
+                        1 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[0].setSkillSlot(0, Skill.scratch.getCopy());
+                dungeonEnemies[0].readySkills("");
+                dungeonEnemies[1] = new ComputerPlayer("lang.npc.rat.name",
+                        1 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[1].setSkillSlot(0, Skill.scratch.getCopy());
+                dungeonEnemies[1].readySkills("");
+                dungeonEnemies[2] = new ComputerPlayer("lang.npc.bat.name",
+                        1 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[2].setSkillSlot(0, Skill.bite.getCopy());
+                dungeonEnemies[2].readySkills("");
+                dungeonEnemies[3] = new ComputerPlayer("lang.npc.rat.name",
+                        1 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[3].setSkillSlot(0, Skill.scratch.getCopy());
+                dungeonEnemies[3].readySkills("");
+                dungeonEnemies[4] = new ComputerPlayer("lang.npc.rat.name",
+                        2 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[4].setSkillSlot(0, Skill.scratch.getCopy());
+                dungeonEnemies[4].setSkillSlot(1, Skill.bite.getCopy());
+                dungeonEnemies[4].readySkills("");
+                dungeonEnemies[5] = new ComputerPlayer("lang.npc.rat.name",
+                        1 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[5].setSkillSlot(0, Skill.scratch.getCopy());
+                dungeonEnemies[5].readySkills("");
+                dungeonEnemies[6] = new ComputerPlayer("lang.npc.bat.name",
+                        1 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[6].setSkillSlot(0, Skill.bite.getCopy());
+                dungeonEnemies[6].readySkills("");
+                dungeonEnemies[7] = new ComputerPlayer("lang.npc.rat.name",
+                        2 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[7].setSkillSlot(0, Skill.scratch.getCopy());
+                dungeonEnemies[7].setSkillSlot(1, Skill.bite.getCopy());
+                dungeonEnemies[7].readySkills("");
+                dungeonEnemies[8] = new ComputerPlayer("lang.npc.bat.name",
+                        2 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[8].setSkillSlot(0, Skill.bite.getCopy());
+                // dungeonEnemies[8].setSkillSlot(1, Skill.lifeDrain.getCopy());
+                dungeonEnemies[8].readySkills("");
+                dungeonEnemies[9] = new ComputerPlayer("lang.npc.tarantula.name",
+                        2 + player.getAscensions(), Role.SCOUT);
+                dungeonEnemies[9].setSkillSlot(0, Skill.bite.getCopy());
+                dungeonEnemies[9].readySkills("");
+                for(int i = 0; i < dungeonEnemies.length; i++)
+                {
+                    dungeonEnemies[i].registerName(game);
+                }
+                currentEnemy = 0;
+                enemy = dungeonEnemies[currentEnemy];
+        }
         player.readySkills("");
+        this.currentRound = random.nextInt(2);
     }
 
     @Override
@@ -92,97 +108,46 @@ public class BattleScreen extends Screen
      */
     public void update(float deltaTime)
     {
+        Random random = new Random();
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
         List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
-        this.prevRound = currentRound;
-        if(currentRound % 2 == 0)
-        {
-            for (int i = 0; i < touchEvents.size(); i++)
-            {
-                TouchEvent touchEvent = touchEvents.get(i);
-                if (touchEvent.type == TouchEvent.TOUCH_UP)
-                {
-                    if (Math.inBoundary(touchEvent,
-                            (screenW / 2) - Assets.ui_skillSlot.getWidth() * 3,
-                            (int) (screenH * 0.87), 128, 128))
-                    {
-                        if(player.getSkillOnSlot(0).isReady()
-                                && player.hasEnoughManaFor(player.getSkillOnSlot(0)))
-                        {
-                            player.cast(0, currentRound, enemy);
-                            this.currentRound++;
-                        }
+        this.prevRound = this.currentRound;
 
-                    }
-                    else if (Math.inBoundary(touchEvent,
-                            (screenW / 2) - Assets.ui_skillSlot.getWidth() * 2,
-                            (int) (screenH * 0.87), 128, 128))
-                    {
-                        if(player.getSkillOnSlot(1).isReady()
-                                && player.hasEnoughManaFor(player.getSkillOnSlot(1)))
-                        {
-                            player.cast(1, currentRound, enemy);
-                            this.currentRound++;
-                        }
-                    }
-                    else if (Math.inBoundary(touchEvent,
-                            (screenW / 2) - Assets.ui_skillSlot.getWidth(),
-                            (int) (screenH * 0.87), 128, 128))
-                    {
-                        if(player.getSkillOnSlot(2).isReady()
-                                && player.hasEnoughManaFor(player.getSkillOnSlot(2)))
-                        {
-                            player.cast(2, currentRound, enemy);
-                            this.currentRound++;
-                        }
-                    }
-                    else if (Math.inBoundary(touchEvent,
-                            (screenW / 2),
-                            (int) (screenH * 0.87), 128, 128))
-                    {
-                        if(player.getSkillOnSlot(3).isReady()
-                                && player.hasEnoughManaFor(player.getSkillOnSlot(3)))
-                        {
-                            player.cast(3, currentRound, enemy);
-                            this.currentRound++;
-                        }
-                    }
-                    else if (Math.inBoundary(touchEvent,
-                            (screenW / 2) + Assets.ui_skillSlot.getWidth(),
-                            (int) (screenH * 0.87), 128, 128))
-                    {
-                        if(player.getSkillOnSlot(4).isReady()
-                                && player.hasEnoughManaFor(player.getSkillOnSlot(4)))
-                        {
-                            player.cast(4, currentRound, enemy);
-                            this.currentRound++;
-                        }
-                    }
-                    else if (Math.inBoundary(touchEvent,
-                            (screenW / 2) + Assets.ui_skillSlot.getWidth() * 2,
-                            (int) (screenH * 0.87), 128, 128))
-                    {
-                        if(player.getSkillOnSlot(5).isReady()
-                                && player.hasEnoughManaFor(player.getSkillOnSlot(5)))
-                        {
-                            player.cast(5, currentRound, enemy);
-                            this.currentRound++;
-                        }
-                    }
+        if(this.currentRound % 2 == 0 || this.mode == 1)
+        {
+            if(this.mode == 1)
+            {
+                this.player = game.getCurrentPlayer();
+                this.enemy = game.getCurrentPlayer2();
+                if(currentRound % 2 == 1)
+                {
+                    this.player = game.getCurrentPlayer2();
+                    this.enemy = game.getCurrentPlayer();
                 }
             }
+            handlePlayerInput(touchEvents);
         }
         else
         {
-            enemy.chooseSkill(currentRound, player);
+            if(enemy instanceof ComputerPlayer)
+            {
+                ((ComputerPlayer)enemy).chooseSkill(currentRound, player);
+            }
             this.currentRound++;
         }
 
-        // enemy defeated
+
         player.onUpdate(this.currentRound, enemy, this.prevRound != this.currentRound);
         enemy.onUpdate(this.currentRound, player, this.prevRound != this.currentRound);
+        // Update Player 2 level according to player 1 level.
+        while(player.getLevel() > game.getCurrentPlayer2().getLevel())
+        {
+            game.getCurrentPlayer2().onLevelUp();
+            game.getCurrentPlayer2().onUpdate(this.currentRound, enemy,
+                    this.prevRound != this.currentRound);
+        }
         ticks++;
 
         if(player.isDead())
@@ -192,14 +157,23 @@ public class BattleScreen extends Screen
         }
         if(enemy.isDead())
         {
-            if(this.currentEnemy >= 9)
+            if(this.mode == 0)
             {
-                game.setScreen(new MenuScreen(game));
-                game.getCurrentPlayer().setAscensions(player.getAscensions() + 1);
+                if (this.currentEnemy >= 9)
+                {
+                    game.setScreen(new MenuScreen(game));
+                    game.getCurrentPlayer().setAscensions(player.getAscensions() + 1);
+                }
+                else
+                {
+                    enemy = dungeonEnemies[++this.currentEnemy];
+                }
             }
             else
             {
-                enemy = dungeonEnemies[++this.currentEnemy];
+                game.getCurrentPlayer().revive();
+                game.getCurrentPlayer2().revive();
+                game.setScreen(new MenuScreen(game));
             }
         }
     }
@@ -217,140 +191,11 @@ public class BattleScreen extends Screen
         graphics.clearScreen(0x459AFF);
 
         // Draw background
-        if(enemy.getLevel() % 10 == 0)
-        {
-            graphics.drawScaledImage(Assets.bg_exampleBoss, 0, 0, screenW, screenH,
-                    0, 0, 700, 1270);
-        }
-        else
-        {
-            graphics.drawScaledImage(Assets.bg_example, 0, 0, screenW, screenH,
-                    0, 0, 700, 1270);
-        }
+        graphics.drawScaledImage(Assets.bg_example, 0, 0, screenW, screenH,
+                0, 0, 700, 1270);
 
-        // Enemy Health Bar
-        graphics.drawImage(Assets.ui_barRect,
-                (screenW / 2) - Assets.ui_barRect.getWidth() / 2,
-                (int)(screenH * 0.05));
-        // Health Bar
-        graphics.drawScaledImage(Assets.ui_barKnife,
-                (int)(screenW * 0.02), (int)(screenH * 0.83) - 84,
-                400, 48, 0, 0, 500, 96);
-        // Mana Bar
-        graphics.drawScaledImage(Assets.ui_barRect,
-                (int)(screenW * 0.02), (int)(screenH * 0.83) - 36,
-                400, 36, 0, 0, 500, 96);
-        // Xp Bar
-        graphics.drawScaledImage(Assets.ui_barRect,
-                (int)(screenW * 0.02), (int)(screenH * 0.83),
-                500, 27, 0, 0, 500, 96);
-
-        // Fill Enemy Health
-        for(int i = 0;
-            i < (int)(((double)enemy.getHealth() / (double)enemy.getMaxHealth()) * 480); i++)
-        {
-            graphics.drawImage(Assets.ui_barFill,
-                    (screenW / 2) - Assets.ui_barRect.getWidth() / 2 + 10 + i,
-                    (int)(screenH * 0.05) + 10,
-                    7, 0, 3, 76);
-        }
-
-        // Fill Player Health
-        for (int i = 0;
-                i < (int)(((double)player.getHealth() / (double)player.getMaxHealth()) * 395);
-                i++)
-        {
-            int height = 36;
-            int mod = 0;
-            if(i > 300)
-            {
-                height -= (i - 300) * 0.4;
-                mod += (i - 300) * 0.4;
-            }
-            graphics.drawScaledImage(Assets.ui_barFill,
-                    (int)(screenW * 0.02) + 8 + i, (int)(screenH * 0.83) - 78 + mod,
-                    1, height, 6, 0, 3, 76);
-        }
-        // Fill Mana Bar
-        for(int i = 0;
-            i < (int)(((double)player.getMana() / (double)player.getMaxMana()) * 380); i++)
-        {
-            graphics.drawScaledImage(Assets.ui_barFill,
-                    (int)(screenW * 0.02) + 12 + i, (int)(screenH * 0.83) - 30,
-                    1, 24, 1, 0, 3, 76);
-        }
-        // Fill Xp Bar
-        for(int i = 0; i < (int)(((double)player.getXp() / (double)player.getReqXp()) * 480); i++)
-        {
-            graphics.drawScaledImage(Assets.ui_barFill,
-                    (int)(screenW * 0.02) + 10 + i, (int)(screenH * 0.83) + 6,
-                    1, 15, 3, 0, 1, 76);
-        }
-
-        // Strings
-        Paint textStyle = new Paint();
-        textStyle.setARGB(250, 0, 0, 0);
-        textStyle.setTextAlign(Paint.Align.CENTER);
-        textStyle.setTextSize(36.0f);
-        // Enemy Name and Level
-        String labelEnemyName = (new LocaleStringBuilder(game).addLocaleString(enemy.getNameId()))
-                .addString(", Lvl " + String.valueOf(enemy.getLevel())).finalizeString();
-        graphics.drawString(labelEnemyName, screenW / 2,
-                (int) (screenH * 0.035), textStyle);
-
-        //     Enemy Health
-        graphics.drawString(
-                String.valueOf(enemy.getHealth()) + "/" + String.valueOf(enemy.getMaxHealth()),
-                screenW / 2, (int) (screenH * 0.05) + 60, textStyle);
-
-
-        //     Player Xp
-        textStyle.setTextSize(15);
-        graphics.drawString(
-                String.valueOf(player.getXp()) + "/" + String.valueOf(player.getReqXp()) + "XP",
-                (int) (screenW * 0.02 + Assets.ui_barRect.getWidth() / 2),
-                (int) (screenH * 0.83) + 20, textStyle);
-        //     Player Mana
-        textStyle.setTextSize(24);
-        graphics.drawString(
-                String.valueOf(player.getMana()) + "/" + String.valueOf(player.getMaxMana()),
-                (int) (screenW * 0.02) + 12 + 200, (int) (screenH * 0.83) - 12, textStyle);
-        //     Player Health
-        textStyle.setTextSize(36);
-        graphics.drawString(
-                String.valueOf(player.getHealth()) + "/" + String.valueOf(player.getMaxHealth()),
-                (int)(screenW * 0.02) + (Assets.ui_barKnife.getWidth() / 2) - 64,
-                (int)(screenH * 0.83) - 48, textStyle);
-        //     Player Level
-        textStyle.setTextSize(36);
-        textStyle.setTextAlign(Paint.Align.LEFT);
-        String labelLevel = (new LocaleStringBuilder(game)).addLocaleString("lang.battle.ui.level")
-                .addString(" " + String.valueOf(player.getLevel())).finalizeString();
-        graphics.drawString(labelLevel, (int) (screenW * 0.08),
-                (int) (screenH * 0.75), textStyle);
-
-        // Skill Interface
-        graphics.drawImage(Assets.ui_skillSlotLeft,
-                (screenW / 2) - Assets.ui_skillSlot.getWidth() * 3,
-                (int)(screenH * 0.87));
-        for(int i = 0; i < 4; i++)
-        {
-            int offset = i - 2;
-            graphics.drawImage(Assets.ui_skillSlot,
-                    (screenW / 2) + Assets.ui_skillSlot.getWidth() * offset,
-                    (int)(screenH * 0.87));
-        }
-        graphics.drawImage(Assets.ui_skillSlotRight,
-                (screenW / 2) + Assets.ui_skillSlot.getWidth() * 2,
-                (int)(screenH * 0.87));
-
-        for(int i = 0; i < 6; i++)
-        {
-            int offset = i - 3;
-            player.getSkillOnSlot(i).draw(game, graphics,
-                    (screenW / 2) + Assets.ui_skillSlot.getWidth() * offset + 8,
-                    (int)(screenH * 0.87) + 8, this.currentRound);
-        }
+        enemy.drawAsOpponent(game, graphics);
+        player.drawAsPlayer(game, graphics, currentRound);
     }
 
     @Override
@@ -378,6 +223,35 @@ public class BattleScreen extends Screen
     /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
+        player.removeAllBuffs();
         game.setScreen(new MenuScreen(game));
+    }
+
+    public void handlePlayerInput(List<TouchEvent> touchEvents)
+    {
+        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
+
+        for (int i = 0; i < touchEvents.size(); i++)
+        {
+            TouchEvent touchEvent = touchEvents.get(i);
+            if (touchEvent.type == TouchEvent.TOUCH_UP)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    if (Math.inBoundary(touchEvent,
+                            (screenW / 2) - Assets.ui_skillSlot.getWidth() * (3 - j),
+                            (int) (screenH * 0.87), 128, 128))
+                    {
+                        if (this.player.getSkillOnSlot(j).isReady()
+                                && this.player.hasEnoughManaFor(this.player.getSkillOnSlot(j)))
+                        {
+                            this.player.cast(j, currentRound, this.enemy);
+                            this.currentRound++;
+                        }
+
+                    }
+                }
+            }
+        }
     }
 }

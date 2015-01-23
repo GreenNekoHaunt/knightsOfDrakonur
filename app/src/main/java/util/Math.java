@@ -6,6 +6,7 @@ package util;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.kod.knightsofdrakonur.framework.FileIO;
 import com.kod.knightsofdrakonur.framework.Input.TouchEvent;
@@ -38,38 +39,19 @@ public class Math
         return false;
     }
 
-    /* Gets the width of the String on the screen when using locales.
+    /* Gets the width of the String on the screen.
      *
-     * @param Context context - the adroind content context.
-     * @param String id - the locale id for the language file.
-     * @param Paint paint - the style of the text that gets drawn.
+     * @param String text - the text to be measured.
+     * @param float size - the text size used.
      *
-     * TODO: Move this function into LocaleStringBuilder maybe?
+     * @return int - the width of the text.
      */
-    public static float getLocaleStringWidth(Context context, String id, Paint paint)
+    public static int getTextWidth(String text, float size)
     {
-        Locale locale = paint.getTextLocale();
-        FileIO lang = new AndroidFileIO(context);
-        String text = id;
-
-        try
-        {
-            InputStream in = lang.readAsset("lang/" + locale.getDisplayName() + ".lang");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            while((line = reader.readLine()) != null)
-            {
-                if(line.substring(0, line.indexOf('=')).contentEquals(id))
-                {
-                    text = line.substring(line.indexOf('=') + 1);
-                }
-            }
-        }
-        catch(IOException e)
-        {
-            text = id;
-        }
-
-        return paint.measureText(text);
+        Rect bounds = new Rect();
+        Paint textPaint = new Paint();
+        textPaint.setTextSize(size);
+        textPaint.getTextBounds(text, 0,text.length(), bounds);
+        return bounds.width();
     }
 }

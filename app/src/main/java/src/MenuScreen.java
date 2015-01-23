@@ -5,6 +5,7 @@ package src;
  */
 
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
@@ -18,9 +19,25 @@ import util.Math;
 
 public class MenuScreen extends Screen
 {
+    private String labelAdventure;
+    private String labelArena;
+    private String labelCharacter;
+    private String labelSettings;
+    private String labelLogout;
+
     public MenuScreen(Game game)
     {
         super(game);
+        this.labelAdventure = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.menu.ui.adventure").finalizeString();
+        this.labelArena = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.menu.ui.arena").finalizeString();
+        this.labelCharacter = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.menu.ui.character").finalizeString();
+        this.labelSettings = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.menu.ui.settings").finalizeString();
+        this.labelLogout = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.menu.ui.logout").finalizeString();
     }
 
     @Override
@@ -31,7 +48,6 @@ public class MenuScreen extends Screen
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
-        Graphics graphics = game.getGraphics();
         List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
         for(int i = 0; i < touchEvents.size(); i++)
@@ -39,19 +55,38 @@ public class MenuScreen extends Screen
             TouchEvent touchEvent = touchEvents.get(i);
             if(touchEvent.type == TouchEvent.TOUCH_UP)
             {
-                if(Math.inBoundary(touchEvent, (int)(screenW * 0.5), (int)(screenH * 0.2) - 18, 360, 36))
+                if(Math.inBoundary(touchEvent,
+                        (int)(screenW * 0.5) - Math.getTextWidth(this.labelAdventure, 36.0f) / 2,
+                        (int)(screenH * 0.1) - 36, Math.getTextWidth(this.labelAdventure, 36.0f),
+                        36))
                 {
-                    game.setScreen(new BattleScreen(game));
+                    game.setScreen(new BattleScreen(game, 0));
                 }
-                else if(Math.inBoundary(touchEvent, (int)(screenW * 0.5) - ("Character".length() / 18), (int)(screenH * 0.4) - 18, "Character".length() * 36, 36))
+                else if(Math.inBoundary(touchEvent,
+                        (int)(screenW * 0.5) - Math.getTextWidth(this.labelArena, 36.0f / 2),
+                        (int)(screenH * 0.3) - 36, Math.getTextWidth(this.labelArena, 36.0f), 36))
                 {
-                    game.setScreen(new CharacterScreen(game));
+                    game.setScreen(new BattleScreen(game, 1));
+
                 }
-                else if(Math.inBoundary(touchEvent, (int)(screenW * 0.5) - ("Settings".length() / 18), (int)(screenH * 0.6) - 18, "Settings".length() * 36, 36))
+                else if(Math.inBoundary(touchEvent,
+                        (int)(screenW * 0.5) - Math.getTextWidth(this.labelCharacter, 36.0f) / 2,
+                        (int)(screenH * 0.5) - 36, Math.getTextWidth(this.labelCharacter, 36.0f),
+                        36))
+                {
+                    game.setScreen(new CharacterScreen(game, game.getCurrentPlayer()));
+                }
+                else if(Math.inBoundary(touchEvent,
+                        (int)(screenW * 0.5) - Math.getTextWidth(this.labelSettings, 36.0f) / 2,
+                        (int)(screenH * 0.7) - 36, Math.getTextWidth(this.labelSettings, 36.0f),
+                        36))
                 {
                     game.setScreen(new SettingsScreen(game));
                 }
-                else if(Math.inBoundary(touchEvent, (int)(screenW * 0.5) - ("Logout".length() / 18), (int)(screenH * 0.8) - 18, "Logout".length() * 36, 36))
+                else if(Math.inBoundary(touchEvent,
+                        (int)(screenW * 0.5) - Math.getTextWidth(this.labelLogout, 36.0f) / 2,
+                        (int)(screenH * 0.9) - 36, Math.getTextWidth(this.labelSettings, 36.0f),
+                        36))
                 {
                     game.setScreen(new TitleScreen(game));
                 }
@@ -74,15 +109,15 @@ public class MenuScreen extends Screen
         textStyle.setARGB(250, 250, 250, 250);
         textStyle.setTextAlign(Paint.Align.CENTER);
         textStyle.setTextSize(36.0f);
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.adventure").finalizeString(),
-                (int)(screenW * 0.5), (int)(screenH * 0.2), textStyle);
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.character").finalizeString(), (int)(screenW * 0.5), (int)(screenH * 0.4), textStyle);
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.settings").finalizeString(), (int)(screenW * 0.5), (int)(screenH * 0.6), textStyle);
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.menu.ui.logout").finalizeString(), (int)(screenW * 0.5), (int)(screenH * 0.8), textStyle);
+        graphics.drawString(this.labelAdventure, (int)(screenW * 0.5), (int)(screenH * 0.1),
+                textStyle);
+        graphics.drawString(this.labelArena, (int)(screenW * 0.5), (int)(screenH * 0.3), textStyle);
+        graphics.drawString(this.labelCharacter, (int)(screenW * 0.5), (int)(screenH * 0.5),
+                textStyle);
+        graphics.drawString(this.labelSettings, (int)(screenW * 0.5), (int)(screenH * 0.7),
+                textStyle);
+        graphics.drawString(this.labelLogout, (int)(screenW * 0.5), (int)(screenH * 0.9),
+                textStyle);
     }
 
     @Override

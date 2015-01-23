@@ -13,6 +13,7 @@ import com.kod.knightsofdrakonur.framework.Screen;
 
 import java.util.List;
 
+import src.entity.Player;
 import src.entity.Role;
 import src.mechanic.Attribute;
 import util.LocaleStringBuilder;
@@ -20,13 +21,14 @@ import util.Math;
 
 public class AttributeScreen extends Screen
 {
-    public int ticks = 0;
     private int roleOffset = 0;
     Attribute[] playerImportantAttr = new Attribute[5];
+    private Player player;
 
-    public AttributeScreen(Game game)
+    public AttributeScreen(Game game, Player player)
     {
         super(game);
+        this.player = player;
     }
 
     @Override
@@ -37,18 +39,17 @@ public class AttributeScreen extends Screen
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
-        Graphics graphics = game.getGraphics();
         List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
-        if(game.getCurrentPlayer().getRole() == Role.WARRIOR)
+        if(this.player.getRole() == Role.WARRIOR)
         {
             roleOffset = 0;
         }
-        else if(game.getCurrentPlayer().getRole() == Role.SCOUT)
+        else if(this.player.getRole() == Role.SCOUT)
         {
             roleOffset = 4;
         }
-        else if(game.getCurrentPlayer().getRole() == Role.MAGE)
+        else if(this.player.getRole() == Role.MAGE)
         {
             roleOffset = 8;
         }
@@ -68,21 +69,21 @@ public class AttributeScreen extends Screen
                         (screenW / 2) - (int)(Assets.ui_skillSlot.getWidth() * 1.5),
                         (int)(screenH * 0.04), 128, 128))
                 {
-                    game.getCurrentPlayer().setRole(Role.WARRIOR);
+                    this.player.setRole(Role.WARRIOR);
                     this.resetPlayerAttributes();
                 }
                 else if(Math.inBoundary(touchEvent,
                         (screenW / 2) - (int)(Assets.ui_skillSlot.getWidth() * 0.5),
                         (int)(screenH * 0.04), 128, 128))
                 {
-                    game.getCurrentPlayer().setRole(Role.SCOUT);
+                    this.player.setRole(Role.SCOUT);
                     this.resetPlayerAttributes();
                 }
                 else if(Math.inBoundary(touchEvent,
                         (screenW / 2) + (int)(Assets.ui_skillSlot.getWidth() * 0.5),
                         (int)(screenH * 0.04), 128, 128))
                 {
-                    game.getCurrentPlayer().setRole(Role.MAGE);
+                    this.player.setRole(Role.MAGE);
                     this.resetPlayerAttributes();
                 }
                 for(int j = 0; j < 5; j++)
@@ -92,10 +93,10 @@ public class AttributeScreen extends Screen
                             (int) (screenH * 0.2) + 164 * j, 96, 96))
                     {
                         Attribute attr = playerImportantAttr[j];
-                        if (game.getCurrentPlayer().getAttributeStat(attr) > 0)
+                        if (this.player.getAttributeStat(attr) > 0)
                         {
-                            game.getCurrentPlayer().decreaseAttribute(attr, 1);
-                            game.getCurrentPlayer().increaseUnusedAttributePoints(1);
+                            this.player.decreaseAttribute(attr, 1);
+                            this.player.increaseUnusedAttributePoints(1);
                         }
                     }
                     else if (Math.inBoundary(touchEvent,
@@ -103,10 +104,10 @@ public class AttributeScreen extends Screen
                             (int) (screenH * 0.2) + 164 * j, 96, 96))
                     {
                         Attribute attr = playerImportantAttr[j];
-                        if (game.getCurrentPlayer().getUnusedAttributePoints() > 0)
+                        if (this.player.getUnusedAttributePoints() > 0)
                         {
-                            game.getCurrentPlayer().increaseAttribute(attr, 1);
-                            game.getCurrentPlayer().decreaseUnusedAttributePoints(1);
+                            this.player.increaseAttribute(attr, 1);
+                            this.player.decreaseUnusedAttributePoints(1);
                         }
                     }
                 }
@@ -170,16 +171,19 @@ public class AttributeScreen extends Screen
         // Fill bars
         for(int i = 0; i < 5; i++)
         {
-            int attrStr = game.getCurrentPlayer().getAttributeStat(playerImportantAttr[i]);
+            int attrStr = this.player.getAttributeStat(playerImportantAttr[i]);
             int imagePartX = 9 + (i + this.roleOffset) * 3;
             if(i == 0)
             {
                 imagePartX = 9;
             }
-            graphics.drawScaledImage(Assets.ui_barFill,
-                    (screenW / 2) - Assets.ui_barRect.getWidth() / 2 + 10,
-                    (int)(screenH * 0.2) + 164 * i + 10,
-                    attrStr, 76, imagePartX, 0, 3, 76);
+            for(int j = 0; j < attrStr; j++)
+            {
+                graphics.drawScaledImage(Assets.ui_barFill,
+                        (screenW / 2) - Assets.ui_barRect.getWidth() / 2 + 10 + j,
+                        (int) (screenH * 0.2) + 164 * i + 10,
+                        1, 76, imagePartX, 0, 3, 76);
+            }
         }
 
         Paint textStylePoints = new Paint();
@@ -189,7 +193,7 @@ public class AttributeScreen extends Screen
         textStylePoints.setARGB(255, 255, 255, 200);
         graphics.drawString("Unused Attribute Points",
                 (screenW / 2), screenH - 132, textStylePoints);
-        graphics.drawString(String.valueOf(game.getCurrentPlayer().getUnusedAttributePoints()),
+        graphics.drawString(String.valueOf(this.player.getUnusedAttributePoints()),
                 (screenW / 2), screenH - 88, textStylePoints);
     }
 
@@ -218,7 +222,7 @@ public class AttributeScreen extends Screen
     /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
-        game.setScreen(new CharacterScreen(game));
+        game.setScreen(new CharacterScreen(game, this.player));
     }
 
     public void resetPlayerAttributes()
@@ -227,10 +231,10 @@ public class AttributeScreen extends Screen
         for(int i = 0; i < Attribute.values().length - 3; i++)
         {
             Attribute currAttr = Attribute.values()[i + 3];
-            int attrValue = game.getCurrentPlayer().getAttributeStat(currAttr);
-            game.getCurrentPlayer().decreaseAttribute(currAttr, attrValue);
+            int attrValue = this.player.getAttributeStat(currAttr);
+            this.player.decreaseAttribute(currAttr, attrValue);
             attributes += attrValue;
         }
-        game.getCurrentPlayer().increaseUnusedAttributePoints(attributes);
+        this.player.increaseUnusedAttributePoints(attributes);
     }
 }

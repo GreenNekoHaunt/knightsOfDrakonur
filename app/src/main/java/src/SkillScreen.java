@@ -4,10 +4,8 @@ package src;
  * Created by GreenyNeko on 11.12.2014.
  */
 
-import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
@@ -35,9 +33,10 @@ public class SkillScreen extends Screen
     private int dragY;
     private int prevSlot;
 
-    public SkillScreen(Game game)
+    public SkillScreen(Game game, Player player)
     {
         super(game);
+        this.player = player;
     }
 
     @Override
@@ -47,7 +46,6 @@ public class SkillScreen extends Screen
      */
     public void update(float deltaTime)
     {
-        player = game.getCurrentPlayer();
         player.readySkills("");
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
@@ -76,7 +74,7 @@ public class SkillScreen extends Screen
                     int skillSelected = ((touchEvent.y + internScrollBarPos) / 128) + 2;
                     if (skillSelected < Skill.skillCount)
                     {
-                        if (player.hasSkillEquipped(Skill.skills.get(skillSelected).getCopy()))
+                        if (player.isSkillEquipped(Skill.skills.get(skillSelected).getCopy()))
                         {
                             // Inform the player that more than one skill cannot be put on the
                             // skill bar.
@@ -277,6 +275,6 @@ public class SkillScreen extends Screen
     /* When the back button of the smartphone is pressed. */
     public void onBackPressed()
     {
-        game.setScreen(new CharacterScreen(game));
+        game.setScreen(new CharacterScreen(game, this.player));
     }
 }

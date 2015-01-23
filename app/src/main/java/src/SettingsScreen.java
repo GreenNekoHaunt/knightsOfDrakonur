@@ -20,9 +20,19 @@ import util.Math;
 
 public class SettingsScreen extends Screen
 {
+    private String labelLanguage;
+    private String valueLanguage;
+    private String labelBack;
+
     public SettingsScreen(Game game)
     {
         super(game);
+        this.labelLanguage = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.settings.ui.language").finalizeString();
+        this.valueLanguage = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.self").finalizeString();
+        this.labelBack = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.ui.back").finalizeString();
     }
 
     @Override
@@ -33,7 +43,6 @@ public class SettingsScreen extends Screen
     public void update(float deltaTime)
     {
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
-        Graphics graphics = game.getGraphics();
         List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
         for(int i = 0; i < touchEvents.size(); i++)
@@ -41,25 +50,30 @@ public class SettingsScreen extends Screen
             TouchEvent touchEvent = touchEvents.get(i);
             if(touchEvent.type == TouchEvent.TOUCH_UP)
             {
-                Paint paint = new Paint();
-                paint.setTextSize(36.0f);
-                float width = Math.getLocaleStringWidth((Context)game, "lang.settings.ui.language",
-                        paint);
+                float width = Math.getTextWidth(this.labelLanguage, 36.0f);
                 if(Math.inBoundary(touchEvent, (screenW / 2) - (int)(width / 2), screenH / 2,
                         (int)width, 36))
                 {
                     if (game.getLocale() == Locale.ENGLISH)
                     {
                         game.setLocale(Locale.GERMAN);
-                    } else if (game.getLocale() == Locale.GERMAN)
+                    }
+                    else if (game.getLocale() == Locale.GERMAN)
                     {
                         game.setLocale(Locale.JAPANESE);
-                    } else
+                    }
+                    else
                     {
                         game.setLocale(Locale.ENGLISH);
                     }
+                    this.labelLanguage = (new LocaleStringBuilder(game))
+                            .addLocaleString("lang.settings.ui.language").finalizeString();
+                    this.valueLanguage = (new LocaleStringBuilder(game))
+                            .addLocaleString("lang.self").finalizeString();
+                    this.labelBack = (new LocaleStringBuilder(game))
+                            .addLocaleString("lang.ui.back").finalizeString();
                 }
-                width = Math.getLocaleStringWidth((Context)game, "lang.ui.back", paint);
+                width = Math.getTextWidth(this.labelBack, 36.0f);
                 if(Math.inBoundary(touchEvent, (screenW / 2) - (int)(width / 2),
                         (int)(screenH * 0.9), (int)width, 36))
                 {
@@ -86,15 +100,9 @@ public class SettingsScreen extends Screen
         textStyle.setTextAlign(Paint.Align.CENTER);
         textStyle.setTextLocale(game.getLocale());
 
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.settings.ui.language")
-                        .finalizeString(), screenW / 2, screenH / 2 - 52, textStyle);
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.self").finalizeString(),
-                screenW / 2, screenH / 2, textStyle);
-        graphics.drawString(
-                (new LocaleStringBuilder(game)).addLocaleString("lang.ui.back").finalizeString(),
-                screenW / 2, (int)(screenH * 0.90), textStyle);
+        graphics.drawString(this.labelLanguage, screenW / 2, screenH / 2 - 52, textStyle);
+        graphics.drawString(this.valueLanguage, screenW / 2, screenH / 2, textStyle);
+        graphics.drawString(this.labelBack, screenW / 2, (int)(screenH * 0.90), textStyle);
     }
 
     @Override

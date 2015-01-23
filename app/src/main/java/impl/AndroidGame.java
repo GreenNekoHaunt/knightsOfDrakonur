@@ -34,6 +34,7 @@ public abstract class AndroidGame extends Activity implements Game
     Screen screen;
     Locale lang;
     Player player;
+    Player player2;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -172,8 +173,19 @@ public abstract class AndroidGame extends Activity implements Game
     }
 
     @Override
+    public Player getCurrentPlayer2()
+    {
+        return this.player2;
+    }
+
+    @Override
     public void setCurrentPlayer(Player player)
     {
         this.player = player;
+    }
+
+    public void setCurrentPlayer2(Player player)
+    {
+        this.player2 = player;
     }
 }

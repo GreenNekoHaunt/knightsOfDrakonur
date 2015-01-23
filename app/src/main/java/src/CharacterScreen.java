@@ -14,15 +14,17 @@ import com.kod.knightsofdrakonur.framework.Screen;
 import java.util.List;
 import java.util.Locale;
 
+import src.entity.Player;
 import util.Math;
 
 public class CharacterScreen extends Screen
 {
-    public int ticks = 0;
+    private Player player;
 
-    public CharacterScreen(Game game)
+    public CharacterScreen(Game game, Player player)
     {
         super(game);
+        this.player = player;
     }
 
     @Override
@@ -43,15 +45,27 @@ public class CharacterScreen extends Screen
             {
                 if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.12), 160, 256))
                 {
-                    game.setScreen(new AttributeScreen(game));
+                    game.setScreen(new AttributeScreen(game, this.player));
                 }
                 else if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.37), 160, 256))
                 {
-                    game.setScreen(new SkillScreen(game));
+                    game.setScreen(new SkillScreen(game, this.player));
                 }
                 else if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.62), 160, 256))
                 {
-                    game.setScreen(new EquipScreen(game));
+                    game.setScreen(new EquipScreen(game, this.player));
+                }
+                else if(Math.inBoundary(touchEvent, screenW - Assets.ui_shield.getWidth(), 0,
+                        192, 256))
+                {
+                    if(this.player == game.getCurrentPlayer())
+                    {
+                        this.player = game.getCurrentPlayer2();
+                    }
+                    else if(this.player == game.getCurrentPlayer2())
+                    {
+                        this.player = game.getCurrentPlayer();
+                    }
                 }
             }
         }
@@ -67,6 +81,21 @@ public class CharacterScreen extends Screen
         int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
         Graphics graphics = game.getGraphics();
         graphics.clearScreen(0x459AFF);
+        Paint numberStyle = new Paint();
+        numberStyle.setTextSize(60.0f);
+        numberStyle.setStrokeWidth(5.0f);
+        numberStyle.setARGB(255, 255, 255, 0);
+        numberStyle.setTextAlign(Paint.Align.CENTER);
+
+        graphics.drawImage(Assets.ui_shield, screenW - Assets.ui_shield.getWidth(), 0);
+        if(this.player == game.getCurrentPlayer())
+        {
+            graphics.drawString("1", (screenW - Assets.ui_shield.getWidth() / 2), 256 / 2, numberStyle);
+        }
+        else if(this.player == game.getCurrentPlayer2())
+        {
+            graphics.drawString("2", (screenW - Assets.ui_shield.getWidth() / 2), 256 / 2, numberStyle);
+        }
 
         graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.12));
         graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.37));

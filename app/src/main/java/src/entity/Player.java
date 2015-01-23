@@ -1,12 +1,15 @@
 package src.entity;
 
-import java.util.ArrayList;
+import android.graphics.Paint;
+
+import com.kod.knightsofdrakonur.framework.Game;
+import com.kod.knightsofdrakonur.framework.Graphics;
+
 import java.util.HashMap;
 
-import src.mechanic.ActiveBuff;
+import src.Assets;
 import src.mechanic.Attribute;
-import src.mechanic.Buff;
-import src.skills.Skill;
+import util.LocaleStringBuilder;
 
 /**
  * Created by GreenyNeko on 23.12.2014.
@@ -14,6 +17,7 @@ import src.skills.Skill;
 public class Player extends Entity
 {
     protected HashMap<Attribute, Integer> attributes = new HashMap<Attribute, Integer>();
+    private int reqXpRate = 27;
     private int xp;
     private int reqXp;
     private int ascensions;
@@ -24,6 +28,12 @@ public class Player extends Entity
         super(role);
         this.xp = 0;
         this.reqXp = (int)(0.25 * 27 * (this.getLevel() + 1));
+    }
+
+    public Player(Role role, String name)
+    {
+        this(role);
+        this.setName(name);
     }
 
     @Override
@@ -51,12 +61,15 @@ public class Player extends Entity
         this.setLevel(this.getLevel() + 1);
 
         this.reqXp = (int)(0.25 * 27 * (this.getLevel() + 1));
-        this.setMaxMana(6 * (this.getLevel() + 1) * this.getRole().getManaFactor());
-        this.gainMana(this.getMaxMana());
-        this.setMaxHealth(56 * (this.getLevel() + 1) * this.getRole().getVitalityFactor());
-        this.heal(this.getMaxHealth());
+        this.increaseAttribute(Attribute.RESOURCE, 1);
+        this.increaseAttribute(Attribute.VITALITY, 1);
+        int resource = this.getAttributeStat(Attribute.RESOURCE) + this.baseResource;
+        int vitality = this.getAttributeStat(Attribute.VITALITY) + this.baseVitality;
+        this.setMaxMana(resource * (this.getLevel() + 1) * this.getRole().getManaFactor());
+        this.setMaxHealth(vitality * (this.getLevel() + 1) * this.getRole().getVitalityFactor());
+        this.revive();
         this.attributePoints += 6;
-        this.reqXp = (int)(0.25 * 27 * (this.getLevel() + 1));
+        this.reqXp = (int)(0.25 * reqXpRate * (this.getLevel() + 1));
     }
 
     /* Returns the current experience.
@@ -131,5 +144,105 @@ public class Player extends Entity
     public void receiveXp(int amount)
     {
         this.xp += amount;
+    }
+
+    public void drawAsPlayer(Game game, Graphics graphics, int currentRound)
+    {
+        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
+        Paint textStyle = new Paint();
+        textStyle.setARGB(250, 0, 0, 0);
+        textStyle.setTextAlign(Paint.Align.CENTER);
+        textStyle.setTextSize(36.0f);
+        // Health Bar
+        graphics.drawScaledImage(Assets.ui_barKnife,
+                (int)(screenW * 0.02), (int)(screenH * 0.83) - 84,
+                400, 48, 0, 0, 500, 96);
+        // Mana Bar
+        graphics.drawScaledImage(Assets.ui_barRect,
+                (int)(screenW * 0.02), (int)(screenH * 0.83) - 36,
+                400, 36, 0, 0, 500, 96);
+        // Fill Player Health
+        for (int i = 0;
+             i < (int)(((double)this.getHealth() / (double)this.getMaxHealth()) * 395);
+             i++)
+        {
+            int height = 36;
+            int mod = 0;
+            if(i > 300)
+            {
+                height -= (i - 300) * 0.4;
+                mod += (i - 300) * 0.4;
+            }
+            graphics.drawScaledImage(Assets.ui_barFill,
+                    (int)(screenW * 0.02) + 8 + i, (int)(screenH * 0.83) - 78 + mod,
+                    1, height, 6, 0, 3, 76);
+        }
+        // Fill Mana Bar
+        for(int i = 0;
+            i < (int)(((double)this.getMana() / (double)this.getMaxMana()) * 380); i++)
+        {
+            graphics.drawScaledImage(Assets.ui_barFill,
+                    (int)(screenW * 0.02) + 12 + i, (int)(screenH * 0.83) - 30,
+                    1, 24, 1, 0, 3, 76);
+        }
+
+        textStyle.setTextSize(24);
+        graphics.drawString(
+                String.valueOf(this.getMana()) + "/" + String.valueOf(this.getMaxMana()),
+                (int) (screenW * 0.02) + 12 + 200, (int) (screenH * 0.83) - 12, textStyle);
+        textStyle.setTextSize(36);
+        graphics.drawString(
+                String.valueOf(this.getHealth()) + "/" + String.valueOf(this.getMaxHealth()),
+                (int)(screenW * 0.02) + (Assets.ui_barKnife.getWidth() / 2) - 64,
+                (int)(screenH * 0.83) - 48, textStyle);
+        textStyle.setTextSize(36);
+        textStyle.setTextAlign(Paint.Align.LEFT);
+        graphics.drawString(this.getName(), (int)(screenW * 0.03), (int)(screenH * 0.72),
+                textStyle);
+        String labelLevel = (new LocaleStringBuilder(game))
+                .addLocaleString("lang.battle.ui.level")
+                .addString(" " + String.valueOf(this.getLevel())).finalizeString();
+        graphics.drawString(labelLevel, (int) (screenW * 0.03),
+                (int) (screenH * 0.75), textStyle);
+
+        // Skill Interface
+        graphics.drawImage(Assets.ui_skillSlotLeft,
+                (screenW / 2) - Assets.ui_skillSlot.getWidth() * 3,
+                (int)(screenH * 0.87));
+        for(int i = 0; i < 4; i++)
+        {
+            int offset = i - 2;
+            graphics.drawImage(Assets.ui_skillSlot,
+                    (screenW / 2) + Assets.ui_skillSlot.getWidth() * offset,
+                    (int)(screenH * 0.87));
+        }
+        graphics.drawImage(Assets.ui_skillSlotRight,
+                (screenW / 2) + Assets.ui_skillSlot.getWidth() * 2,
+                (int)(screenH * 0.87));
+
+        for(int i = 0; i < 6; i++)
+        {
+            int offset = i - 3;
+            this.getSkillOnSlot(i).draw(game, graphics,
+                    (screenW / 2) + Assets.ui_skillSlot.getWidth() * offset + 8,
+                    (int)(screenH * 0.87) + 8, currentRound);
+        }
+
+        graphics.drawScaledImage(Assets.ui_barRect,
+                (int) (screenW * 0.02), (int) (screenH * 0.83),
+                500, 27, 0, 0, 500, 96);
+        for (int i = 0;
+             i < (int) (((double) this.getXp() / (double) this.getReqXp()) * 480); i++)
+        {
+            graphics.drawScaledImage(Assets.ui_barFill,
+                    (int) (screenW * 0.02) + 10 + i, (int) (screenH * 0.83) + 6,
+                    1, 15, 3, 0, 1, 76);
+        }
+        textStyle.setTextSize(15);
+        graphics.drawString(
+                String.valueOf(this.getXp()) + "/"
+                        + String.valueOf(this.getReqXp()) + "XP",
+                (int) (screenW * 0.02 + Assets.ui_barRect.getWidth() / 2),
+                (int) (screenH * 0.83) + 20, textStyle);
     }
 }

@@ -34,6 +34,8 @@ public class Buff implements Cloneable
             "lang.buff.waterbuff.desc", "lang.buff.waterbuff.desc.short", Attribute.WATER, 3));
     public static Buff airBuff = (new BuffAttribute("lang.buff.airbuff.name",
             "lang.buff.airbuff.desc", "lang.buff.airbuff.desc.short", Attribute.AIR, 3));
+    public static Buff earthBuff = (new BuffAttribute("lang.buff.earthbuff.name",
+            "lang.buff.earthbuff.desc", "lang.buff.earthbuff.desc.short", Attribute.EARTH, 3));
 
     public Buff()
     {
@@ -137,5 +139,13 @@ public class Buff implements Cloneable
         {
             return null;
         }
+    }
+
+    /* Draws the buff icon.
+     *
+     */
+    public void draw()
+    {
+
     }
 }
