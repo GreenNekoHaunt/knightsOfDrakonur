@@ -161,12 +161,6 @@ public abstract class AndroidGame extends Activity implements Game
     }
 
     @Override
-    public void finishGame()
-    {
-        this.finish();
-    }
-
-    @Override
     public Player getCurrentPlayer()
     {
         return this.player;

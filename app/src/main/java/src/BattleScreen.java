@@ -127,13 +127,23 @@ public class BattleScreen extends Screen
                     this.enemy = game.getCurrentPlayer();
                 }
             }
-            handlePlayerInput(touchEvents);
+            if(this.player.canCast())
+            {
+                handlePlayerInput(touchEvents);
+            }
+            else
+            {
+                this.currentRound++;
+            }
         }
         else
         {
             if(enemy instanceof ComputerPlayer)
             {
-                ((ComputerPlayer)enemy).chooseSkill(currentRound, player);
+                if(enemy.canCast())
+                {
+                    ((ComputerPlayer) enemy).chooseSkill(currentRound, player);
+                }
             }
             this.currentRound++;
         }
@@ -248,7 +258,6 @@ public class BattleScreen extends Screen
                             this.player.cast(j, currentRound, this.enemy);
                             this.currentRound++;
                         }
-
                     }
                 }
             }

@@ -24,6 +24,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.Log;
 import android.util.Xml;
+import android.widget.EditText;
 
 import com.kod.knightsofdrakonur.framework.FileIO;
 import com.kod.knightsofdrakonur.framework.Graphics;
@@ -185,6 +186,14 @@ public class AndroidGraphics implements Graphics
         destRect.bottom = y + height;
 
         canvas.drawBitmap(((AndroidImage)image).bitmap, srcRect, destRect, null);
+    }
+
+    @Override
+    public void drawTextEdit(EditText editText, int x, int y, int width, int height, Paint textStyle)
+    {
+        editText.setDrawingCacheEnabled(true);
+        Bitmap bitmap = editText.getDrawingCache();
+        editText.draw(canvas);
     }
 
     @Override

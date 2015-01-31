@@ -26,9 +26,12 @@ public class Entity
     protected HashMap<Attribute, Integer> attributes = new HashMap<Attribute, Integer>();
     protected final int baseResource = 6;
     protected final int baseVitality = 56;
-    protected final int[] slotUnlocks = new int[]{1, 2, 3, 6, 8, 10};
+    protected final int[] slotUnlocks = new int[]{1, 2, 3, 5, 8, 12};
+    protected final int secondaryRoleUnlockLevel = 16;
+    protected ArrayList<ActiveBuff> buffs = new ArrayList<ActiveBuff>();
     private String name;
     private Role role;
+    private Role secondaryRole;
     private int critRating = 0;
     private int blockRating = 0;
     private int dodgeRating = 0;
@@ -42,7 +45,6 @@ public class Entity
     private Skill slots[] = new Skill[6];
     private boolean dead;
     private boolean stunned;
-    private ArrayList<ActiveBuff> buffs = new ArrayList<ActiveBuff>();
 
     public Entity(Role role)
     {
@@ -221,6 +223,12 @@ public class Entity
         return this.role;
     }
 
+    /* Returns the entities secondary role or class.
+     *
+     * @return Role - the secondary role.
+     */
+    public Role getSecondaryRole() { return this.secondaryRole; }
+
     /* Returns the entities current level.
      *
      * @return int - the entities current level.
@@ -349,7 +357,7 @@ public class Entity
 
     /* Sets the role of the entity afterwards.
      *
-     * @param Role role - the new role/class assigned to the player.
+     * @param Role role - the new role/class assigned to the entity.
      */
     public void setRole(Role role)
     {
@@ -359,6 +367,18 @@ public class Entity
         this.setMaxMana(res * (this.getLevel() + 1) * role.getManaFactor());
         this.setMaxHealth(vita * (this.getLevel() + 1) * role.getVitalityFactor());
         this.revive();
+    }
+
+    /* Sets the secondary role of the entity.
+     *
+     * @param Role role - the new secondary role/class.
+     */
+    public void setSecondaryRole(Role role)
+    {
+        if(this.role != role)
+        {
+            this.secondaryRole = role;
+        }
     }
 
     /* Sets the name of the entity.
@@ -420,6 +440,14 @@ public class Entity
         return this.level < slotUnlocks[slot];
     }
 
+    /* Checks whether or not the entity can have a secondary role/class.
+     *
+     */
+    public boolean isSecondaryRoleLocked()
+    {
+        return this.level < secondaryRoleUnlockLevel;
+    }
+
     /* Revives the entity filling his health, mana and readying his skills. */
     public void revive()
     {
@@ -457,6 +485,27 @@ public class Entity
             buff.getBuff().onPurge(this);
         }
         this.buffs.remove(buff);
+    }
+
+    /* Returns the size of the stack of a buff.
+     * If the entity has multiple ActiveBuffs of the same time this method
+     * will return a value greater than 1 if he has only one of a type it will return 1.
+     *
+     * @param Buff buff - the buff to check for multiple stacks.
+     *
+     * @return int - the stack amount.
+     */
+    public int getActiveBuffStackSize(Buff buff)
+    {
+        int stackSize = 0;
+        for(int i = 0; i < this.buffs.size(); i++)
+        {
+            if(this.buffs.get(i).getBuff().getId() == buff.getId())
+            {
+                stackSize++;
+            }
+        }
+        return stackSize;
     }
 
     /* Makes all buffs wear off. Do not use as mechanic to remove buffs.
@@ -591,6 +640,23 @@ public class Entity
         this.attributes.put(attr, this.attributes.get(attr) - value);
     }
 
+    /* Returns whether or not the entity can cast any abilities at all currently.
+     *
+     * @return boolean - whether or not the entity can cast any skills at all.
+     */
+    public boolean canCast()
+    {
+        for(int i = 0; i < this.slots.length; i++)
+        {
+            Skill skill = this.getSkillOnSlot(i);
+            if(skill.isReady() && this.hasEnoughManaFor(skill) && !this.isSlotLocked(i))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /* Activates the skill on the slot.
      *
      * @param int slot - which skill in the entities slots should be activated.
@@ -639,9 +705,38 @@ public class Entity
         graphics.drawString(labelEnemyName, screenW / 2,
                 (int) (screenH * 0.035), textStyle);
 
-        //     Enemy Health
+        // Enemy Health
         graphics.drawString(
                 String.valueOf(this.getHealth()) + "/" + String.valueOf(this.getMaxHealth()),
                 screenW / 2, (int) (screenH * 0.05) + 60, textStyle);
+
+        // Draw buffs and debuffs
+        ArrayList<ActiveBuff> filteredBuffs = new ArrayList<ActiveBuff>();
+        for(int i = 0; i < this.buffs.size(); i++)
+        {
+            if(filteredBuffs.size() > 0)
+            {
+                for (int j = 0; j < filteredBuffs.size(); j++) {
+                    if (filteredBuffs.get(j).getBuff().getId() == this.buffs.get(i).getBuff().getId()) {
+                        break;
+                    }
+                    filteredBuffs.add(this.buffs.get(i));
+                }
+            }
+            else
+            {
+                filteredBuffs.add(this.buffs.get(i));
+            }
+        }
+        for(int i = 0; i < 7; i++)
+        {
+            if(i < filteredBuffs.size())
+            {
+                filteredBuffs.get(i).getBuff().draw(game, graphics,
+                        (screenW / 2) - (Assets.ui_barRect.getWidth() / 2) + i * 72,
+                        (int) (screenH * 0.14), this.buffs.get(i).getTTL(),
+                        this.getActiveBuffStackSize(this.buffs.get(i).getBuff()));
+            }
+        }
     }
 }

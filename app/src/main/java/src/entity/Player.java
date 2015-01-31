@@ -5,10 +5,13 @@ import android.graphics.Paint;
 import com.kod.knightsofdrakonur.framework.Game;
 import com.kod.knightsofdrakonur.framework.Graphics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import src.Assets;
+import src.mechanic.ActiveBuff;
 import src.mechanic.Attribute;
+import src.skills.Skill;
 import util.LocaleStringBuilder;
 
 /**
@@ -17,6 +20,7 @@ import util.LocaleStringBuilder;
 public class Player extends Entity
 {
     protected HashMap<Attribute, Integer> attributes = new HashMap<Attribute, Integer>();
+    private ArrayList<Skill> learnedSkills = new ArrayList<Skill>();
     private int reqXpRate = 27;
     private int xp;
     private int reqXp;
@@ -28,6 +32,21 @@ public class Player extends Entity
         super(role);
         this.xp = 0;
         this.reqXp = (int)(0.25 * 27 * (this.getLevel() + 1));
+        if(this.getRole() == Role.WARRIOR)
+        {
+            this.learnSkill(Skill.heavyStrike);
+        }
+        else if(this.getRole() == Role.SCOUT)
+        {
+            this.learnSkill(Skill.arrowShot);
+        }
+        else if(this.getRole() == Role.MAGE)
+        {
+            this.learnSkill(Skill.fireball);
+            this.learnSkill(Skill.icicles);
+            this.learnSkill(Skill.throwRocks);
+            this.learnSkill(Skill.boltCharge);
+        }
     }
 
     public Player(Role role, String name)
@@ -110,6 +129,36 @@ public class Player extends Entity
         return this.attributePoints;
     }
 
+    public int getLearnedSkillsAmount()
+    {
+        return this.learnedSkills.size();
+    }
+
+    /* Returns whether or not the player has learned the skill.
+     *
+     * @param Skill skill - the skill to be checked.
+     */
+    public boolean hasLearnedSkill(Skill skill)
+    {
+        for(int i = 0; i < learnedSkills.size(); i++)
+        {
+            if(skill.getId() == learnedSkills.get(i).getId())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Sets the number of ascension.
+     *
+     * NOTE: This will be removed when more dungeons are added.
+     */
+    public void setAscensions(int amount)
+    {
+        this.ascensions = amount;
+    }
+
     /* Decreases the amount of attribute points open to set.
      *
      * @param int amount - the amount of points.
@@ -128,15 +177,6 @@ public class Player extends Entity
         this.attributePoints += amount;
     }
 
-    /* Sets the number of ascension.
-     *
-     * NOTE: This will be removed when more dungeons are added.
-     */
-    public void setAscensions(int amount)
-    {
-        this.ascensions = amount;
-    }
-
     /* Gives the player experience points.
      *
      * @param int amount - the amount of experience that should be given.
@@ -144,6 +184,24 @@ public class Player extends Entity
     public void receiveXp(int amount)
     {
         this.xp += amount;
+    }
+
+    /* Teaches the player a new skill.
+     *
+     * @param Skill skill - the skill that should be taught.
+     */
+    public void learnSkill(Skill skill)
+    {
+        this.learnedSkills.add(skill);
+    }
+
+    /* Makes the player forget a learned skill.
+     *
+     * @param Skill skill - the skill the player should forget.
+     */
+    public void forgetSkill(Skill skill)
+    {
+        this.learnedSkills.remove(skill);
     }
 
     public void drawAsPlayer(Game game, Graphics graphics, int currentRound)
@@ -244,5 +302,25 @@ public class Player extends Entity
                         + String.valueOf(this.getReqXp()) + "XP",
                 (int) (screenW * 0.02 + Assets.ui_barRect.getWidth() / 2),
                 (int) (screenH * 0.83) + 20, textStyle);
+
+        // Draw buffs and debuffs
+        ArrayList<ActiveBuff> filteredBuffs = new ArrayList<ActiveBuff>();
+        for(int i = 0; i < this.buffs.size(); i++)
+        {
+            if(!filteredBuffs.contains(this.buffs.get(i)))
+            {
+                filteredBuffs.add(this.buffs.get(i));
+            }
+        }
+        for(int i = 0; i < 5; i++)
+        {
+            if(i < filteredBuffs.size())
+            {
+                filteredBuffs.get(i).getBuff().draw(game, graphics,
+                        (int)(screenW * 0.02) + 408 + i * 72,
+                        (int)(screenH * 0.83) - 72, this.buffs.get(i).getTTL(),
+                        this.getActiveBuffStackSize(this.buffs.get(i).getBuff()));
+            }
+        }
     }
 }

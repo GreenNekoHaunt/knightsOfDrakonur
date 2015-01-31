@@ -9,6 +9,7 @@ import com.kod.knightsofdrakonur.framework.Graphics;
 import com.kod.knightsofdrakonur.framework.Screen;
 import com.kod.knightsofdrakonur.framework.Graphics.ImageFormat;
 
+import src.mechanic.Buff;
 import src.skills.Skill;
 
 public class LoadResources extends Screen
@@ -53,8 +54,9 @@ public class LoadResources extends Screen
         Assets.bg_example = graphics.newImage("gfx/bg/example.png", ImageFormat.RGB565);
         Assets.bg_exampleBoss = graphics.newImage("gfx/bg/exampleBoss.png", ImageFormat.RGB565);
 
-        // Give graphics to Skill to initialize all skill graphics
+        // Give graphics to Skill and Buff to initialize all skill and buff graphics
         Skill.initializeGraphics(graphics);
+        Buff.initializeGraphics(graphics);
 
         game.setScreen(new TitleScreen(game));
     }

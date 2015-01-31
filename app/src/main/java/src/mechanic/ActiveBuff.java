@@ -38,6 +38,15 @@ public class ActiveBuff
         return this.buff;
     }
 
+    /* Returns in how many rounds this buff will wear off.
+     *
+     * @return int - the number of rounds.
+     */
+    public int getTTL()
+    {
+        return this.timeToLive;
+    }
+
     /* Returns whether or not the buff is active.
      *
      * @return boolean - whether or not the buff is active.

@@ -29,8 +29,6 @@ public interface Game
 
     public Locale getLocale();
 
-    public void finishGame();
-
     public Player getCurrentPlayer();
 
     public Player getCurrentPlayer2();

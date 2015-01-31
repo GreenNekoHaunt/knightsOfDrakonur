@@ -29,18 +29,6 @@ public class AttributeScreen extends Screen
     {
         super(game);
         this.player = player;
-    }
-
-    @Override
-    /* Called whenever the activity updates.
-     *
-     * @param float deltaTime - the time that has passed.
-     */
-    public void update(float deltaTime)
-    {
-        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
-        List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
-
         if(this.player.getRole() == Role.WARRIOR)
         {
             roleOffset = 0;
@@ -53,6 +41,17 @@ public class AttributeScreen extends Screen
         {
             roleOffset = 8;
         }
+    }
+
+    @Override
+    /* Called whenever the activity updates.
+     *
+     * @param float deltaTime - the time that has passed.
+     */
+    public void update(float deltaTime)
+    {
+        int screenH = game.getGraphics().getHeight(), screenW = game.getGraphics().getWidth();
+        List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
         playerImportantAttr[0] = Attribute.UTILITY;
         for(int i = 0; i < 4; i++)
@@ -69,22 +68,31 @@ public class AttributeScreen extends Screen
                         (screenW / 2) - (int)(Assets.ui_skillSlot.getWidth() * 1.5),
                         (int)(screenH * 0.04), 128, 128))
                 {
-                    this.player.setRole(Role.WARRIOR);
-                    this.resetPlayerAttributes();
+                    if(!player.isSecondaryRoleLocked())
+                    {
+                        player.setSecondaryRole(Role.WARRIOR);
+                        roleOffset = 0;
+                    }
                 }
                 else if(Math.inBoundary(touchEvent,
                         (screenW / 2) - (int)(Assets.ui_skillSlot.getWidth() * 0.5),
                         (int)(screenH * 0.04), 128, 128))
                 {
-                    this.player.setRole(Role.SCOUT);
-                    this.resetPlayerAttributes();
+                    if(!player.isSecondaryRoleLocked())
+                    {
+                        player.setSecondaryRole(Role.SCOUT);
+                        roleOffset = 4;
+                    }
                 }
                 else if(Math.inBoundary(touchEvent,
                         (screenW / 2) + (int)(Assets.ui_skillSlot.getWidth() * 0.5),
                         (int)(screenH * 0.04), 128, 128))
                 {
-                    this.player.setRole(Role.MAGE);
-                    this.resetPlayerAttributes();
+                    if(!player.isSecondaryRoleLocked())
+                    {
+                        player.setSecondaryRole(Role.MAGE);
+                        roleOffset = 8;
+                    }
                 }
                 for(int j = 0; j < 5; j++)
                 {
@@ -131,15 +139,18 @@ public class AttributeScreen extends Screen
         textStyle.setShadowLayer(1.0f, 1.0f, 1.0f, 0xFFFFFFFF);
         textStyle.setARGB(255, 255, 255, 255);
 
-        graphics.drawImage(Assets.ui_skillSlotLeft,
-                (screenW / 2) - (int)(Assets.ui_skillSlot.getWidth() * 1.5),
-                (int)(screenH * 0.04));
-        graphics.drawImage(Assets.ui_skillSlot,
-                (screenW / 2) - (int)(Assets.ui_skillSlot.getWidth() * 0.5),
-                (int)(screenH * 0.04));
-        graphics.drawImage(Assets.ui_skillSlotRight,
-                (screenW / 2) + (int)(Assets.ui_skillSlot.getWidth() * 0.5),
-                (int)(screenH * 0.04));
+        if(!player.isSecondaryRoleLocked())
+        {
+            graphics.drawImage(Assets.ui_skillSlotLeft,
+                    (screenW / 2) - (int) (Assets.ui_skillSlot.getWidth() * 1.5),
+                    (int) (screenH * 0.04));
+            graphics.drawImage(Assets.ui_skillSlot,
+                    (screenW / 2) - (int) (Assets.ui_skillSlot.getWidth() * 0.5),
+                    (int) (screenH * 0.04));
+            graphics.drawImage(Assets.ui_skillSlotRight,
+                    (screenW / 2) + (int) (Assets.ui_skillSlot.getWidth() * 0.5),
+                    (int) (screenH * 0.04));
+        }
 
         // Create an array of attribute names according to the player.
         String[] locales = new String[6];

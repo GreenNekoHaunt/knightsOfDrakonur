@@ -12,6 +12,7 @@ import com.kod.knightsofdrakonur.framework.Graphics;
 import com.kod.knightsofdrakonur.framework.Input.TouchEvent;
 import com.kod.knightsofdrakonur.framework.Screen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import src.entity.Player;
@@ -21,10 +22,11 @@ import util.Math;
 public class SkillScreen extends Screen
 {
     private int ticks = 0;
+    private ArrayList<Skill> unlockedSkills = new ArrayList<Skill>();
     private int internScrollBarPos = 0;
     private int realScrollBarPos = 0;
     private int scrollBarMin = 0;
-    private int scrollBarMax = (Skill.skillCount - 2) * 128;
+    private int scrollBarMax = 0;
     private Player player;
     private Skill dragSkill;
     private boolean dragging = false;
@@ -37,6 +39,14 @@ public class SkillScreen extends Screen
     {
         super(game);
         this.player = player;
+        this.scrollBarMax = this.player.getLearnedSkillsAmount() * 128;
+        for(int i = 0; i < Skill.skillCount; i++)
+        {
+            if(player.hasLearnedSkill(Skill.getSkillById(i)))
+            {
+                unlockedSkills.add(Skill.getSkillById(i));
+            }
+        }
     }
 
     @Override
@@ -71,17 +81,17 @@ public class SkillScreen extends Screen
             {
                 if(Math.inBoundary(touchEvent, 0, 0, screenW - 48, 1152))
                 {
-                    int skillSelected = ((touchEvent.y + internScrollBarPos) / 128) + 2;
+                    int skillSelected = ((touchEvent.y + internScrollBarPos) / 128);
                     if (skillSelected < Skill.skillCount)
                     {
-                        if (player.isSkillEquipped(Skill.skills.get(skillSelected).getCopy()))
+                        if (player.isSkillEquipped(unlockedSkills.get(skillSelected)))
                         {
                             // Inform the player that more than one skill cannot be put on the
                             // skill bar.
                         }
                         else
                         {
-                            this.dragSkill = Skill.skills.get(skillSelected).getCopy();
+                            this.dragSkill = unlockedSkills.get(skillSelected).getCopy();
                             this.dragging = true;
                             this.prevSlot = -1;
                         }
@@ -179,13 +189,13 @@ public class SkillScreen extends Screen
 
         // Draw Skill list
         int x = -internScrollBarPos;
-        for(int i = 2; x < screenH - 128; i++)
+        for(int i = 0; x < screenH - 128; i++)
         {
             graphics.drawScaledImage(Assets.ui_skillBar, 0, x, screenW - 48, 128, 0, 0, 256, 128);
-            // Draw Skill icons
+            // Draw Skill icon
             try
             {
-                Skill skill = Skill.getSkillById(i);
+                Skill skill = unlockedSkills.get(i);
                 if(skill != null)
                 {
                     skill.draw(game, graphics, 16, x + 8, 0);
