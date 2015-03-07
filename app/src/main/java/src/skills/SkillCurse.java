@@ -16,7 +16,7 @@ public class SkillCurse extends Skill
     private double effectiveFactor = 0;
     private Buff curse;
 
-    SkillCurse(String name, String descId, String shortDescId, Attribute attr, Buff curse,
+    public SkillCurse(String name, String descId, String shortDescId, Attribute attr, Buff curse,
                int duration)
     {
         super(name);

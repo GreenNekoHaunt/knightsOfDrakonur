@@ -14,7 +14,7 @@ public class SkillStun extends Skill
     private int duration = 0;
     private double effectiveFactor = 0;
 
-    SkillStun(String name, String descId, String shortDescId, Attribute attr, int duration)
+    public SkillStun(String name, String descId, String shortDescId, Attribute attr, int duration)
     {
         super(name);
         this.duration = duration;

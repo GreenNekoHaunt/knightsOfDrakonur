@@ -14,6 +14,7 @@ import com.kod.knightsofdrakonur.framework.Screen;
 
 import java.util.List;
 
+import src.mechanic.StatUnlock;
 import util.LocaleStringBuilder;
 import util.Math;
 
@@ -92,6 +93,7 @@ public class MenuScreen extends Screen
                 }
             }
         }
+        StatUnlock.updateUnlocks(game);
     }
 
     @Override

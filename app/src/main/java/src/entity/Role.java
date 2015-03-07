@@ -8,7 +8,7 @@ public enum Role
     ANY(0, "Any", "lang.classes.any", 0, 0, 0),
     WARRIOR(1, "Warrior", "lang.classes.warrior", 12, 6, 3),
     SCOUT(2, "Scout", "lang.classes.scout", 8, 4, 5),
-    MAGE(3, "Mage", "lang.classes.mage", 4, 3, 9);
+    MAGE(3, "Mage", "lang.classes.mage", 4, 3, 8);
 
     private int id;
     private String name;

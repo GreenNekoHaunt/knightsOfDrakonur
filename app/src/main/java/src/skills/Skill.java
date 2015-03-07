@@ -110,6 +110,7 @@ public class Skill implements Cloneable
         this.ready = true;
         this.blockable = true;
         this.damageType = DamageType.DIRECT;
+        this.assetPath = "gfx/skills/none.png";
         skills.add(this);
     }
 
@@ -435,11 +436,11 @@ public class Skill implements Cloneable
         // Sets the icon.
         try
         {
-            this.icon = graphics.newImage(assetPath, Graphics.ImageFormat.RGB565);
+            this.icon = graphics.newImage(this.assetPath, Graphics.ImageFormat.RGB565);
         }
         catch(NullPointerException e)
         {
-            Log.e("KOD", "Could not load skill icon for \'" + this.nameId + "\' at \'" + assetPath + "\'");
+            Log.e("KOD", "Could not load skill icon for \'" + this.nameId + "\' at \'" + this.assetPath + "\'");
         }
         return this;
     }

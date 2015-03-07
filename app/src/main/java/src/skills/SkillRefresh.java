@@ -13,7 +13,8 @@ public class SkillRefresh extends Skill
 {
     private double effectiveFactor;
 
-    SkillRefresh(String name, String descId, String shortDescId, Attribute attr, int manaGain)
+    public SkillRefresh(String name, String descId, String shortDescId, Attribute attr,
+                        int manaGain)
     {
         super(name);
         this.setDamage(manaGain);

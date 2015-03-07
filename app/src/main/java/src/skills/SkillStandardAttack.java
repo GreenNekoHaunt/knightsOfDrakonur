@@ -14,7 +14,8 @@ public class SkillStandardAttack extends Skill
 {
     private double damageFactor;
 
-    SkillStandardAttack(String name, String descId, String shortDescId, Attribute attr, int baseDamage)
+    public SkillStandardAttack(String name, String descId, String shortDescId, Attribute attr,
+                               int baseDamage)
     {
         super(name);
         this.setDamage(baseDamage);

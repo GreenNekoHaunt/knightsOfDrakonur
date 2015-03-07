@@ -11,6 +11,7 @@ import java.util.HashMap;
 import src.Assets;
 import src.mechanic.ActiveBuff;
 import src.mechanic.Attribute;
+import src.mechanic.StatUnlock;
 import src.skills.Skill;
 import util.LocaleStringBuilder;
 
@@ -19,9 +20,8 @@ import util.LocaleStringBuilder;
  */
 public class Player extends Entity
 {
-    protected HashMap<Attribute, Integer> attributes = new HashMap<Attribute, Integer>();
     private ArrayList<Skill> learnedSkills = new ArrayList<Skill>();
-    private int reqXpRate = 27;
+    private static final int reqXpRate = 27;
     private int xp;
     private int reqXp;
     private int ascensions;
@@ -31,7 +31,7 @@ public class Player extends Entity
     {
         super(role);
         this.xp = 0;
-        this.reqXp = (int)(0.25 * 27 * (this.getLevel() + 1));
+        this.reqXp = (int)(0.25 * this.reqXpRate * (this.getLevel() + 1));
         if(this.getRole() == Role.WARRIOR)
         {
             this.learnSkill(Skill.heavyStrike);
@@ -78,8 +78,8 @@ public class Player extends Entity
     {
         this.xp -= this.reqXp;
         this.setLevel(this.getLevel() + 1);
+        this.reqXp = (int)(0.25 * this.reqXpRate * (this.getLevel() + 1));
 
-        this.reqXp = (int)(0.25 * 27 * (this.getLevel() + 1));
         this.increaseAttribute(Attribute.RESOURCE, 1);
         this.increaseAttribute(Attribute.VITALITY, 1);
         int resource = this.getAttributeStat(Attribute.RESOURCE) + this.baseResource;
@@ -88,7 +88,6 @@ public class Player extends Entity
         this.setMaxHealth(vitality * (this.getLevel() + 1) * this.getRole().getVitalityFactor());
         this.revive();
         this.attributePoints += 6;
-        this.reqXp = (int)(0.25 * reqXpRate * (this.getLevel() + 1));
     }
 
     /* Returns the current experience.

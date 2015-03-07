@@ -16,6 +16,7 @@ import java.util.List;
 import src.entity.Player;
 import src.entity.Role;
 import src.mechanic.Attribute;
+import src.mechanic.StatUnlock;
 import util.LocaleStringBuilder;
 import util.Math;
 
@@ -70,7 +71,12 @@ public class AttributeScreen extends Screen
                 {
                     if(!player.isSecondaryRoleLocked())
                     {
-                        player.setSecondaryRole(Role.WARRIOR);
+                        if(player.getRole() != Role.WARRIOR
+                                && player.getSecondaryRole() != Role.WARRIOR)
+                        {
+                            this.resetPlayerSecondaryAttributes(this.player.getSecondaryRole());
+                            player.setSecondaryRole(Role.WARRIOR);
+                        }
                         roleOffset = 0;
                     }
                 }
@@ -80,7 +86,12 @@ public class AttributeScreen extends Screen
                 {
                     if(!player.isSecondaryRoleLocked())
                     {
-                        player.setSecondaryRole(Role.SCOUT);
+                        if(player.getRole() != Role.SCOUT
+                                   && player.getSecondaryRole() != Role.SCOUT)
+                        {
+                            this.resetPlayerSecondaryAttributes(this.player.getSecondaryRole());
+                            player.setSecondaryRole(Role.SCOUT);
+                        }
                         roleOffset = 4;
                     }
                 }
@@ -90,7 +101,11 @@ public class AttributeScreen extends Screen
                 {
                     if(!player.isSecondaryRoleLocked())
                     {
-                        player.setSecondaryRole(Role.MAGE);
+                        if(player.getRole() != Role.MAGE && player.getSecondaryRole() != Role.MAGE)
+                        {
+                            this.resetPlayerSecondaryAttributes(this.player.getSecondaryRole());
+                            player.setSecondaryRole(Role.MAGE);
+                        }
                         roleOffset = 8;
                     }
                 }
@@ -121,6 +136,7 @@ public class AttributeScreen extends Screen
                 }
             }
         }
+        StatUnlock.updateUnlocks(game);
     }
 
     @Override
@@ -236,15 +252,18 @@ public class AttributeScreen extends Screen
         game.setScreen(new CharacterScreen(game, this.player));
     }
 
-    public void resetPlayerAttributes()
+    public void resetPlayerSecondaryAttributes(Role role)
     {
         int attributes = 0;
         for(int i = 0; i < Attribute.values().length - 3; i++)
         {
             Attribute currAttr = Attribute.values()[i + 3];
-            int attrValue = this.player.getAttributeStat(currAttr);
-            this.player.decreaseAttribute(currAttr, attrValue);
-            attributes += attrValue;
+            if(currAttr.getReqRole() == role)
+            {
+                int attrValue = this.player.getAttributeStat(currAttr);
+                this.player.decreaseAttribute(currAttr, attrValue);
+                attributes += attrValue;
+            }
         }
         this.player.increaseUnusedAttributePoints(attributes);
     }

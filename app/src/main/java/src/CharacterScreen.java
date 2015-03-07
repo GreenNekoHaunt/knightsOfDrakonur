@@ -51,10 +51,6 @@ public class CharacterScreen extends Screen
                 {
                     game.setScreen(new SkillScreen(game, this.player));
                 }
-                else if(Math.inBoundary(touchEvent, 0, (int)(screenH * 0.62), 160, 256))
-                {
-                    game.setScreen(new EquipScreen(game, this.player));
-                }
                 else if(Math.inBoundary(touchEvent, screenW - Assets.ui_shield.getWidth(), 0,
                         192, 256))
                 {
@@ -99,11 +95,9 @@ public class CharacterScreen extends Screen
 
         graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.12));
         graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.37));
-        graphics.drawImage(Assets.ui_shield, -32, (int)(screenH * 0.62));
 
         graphics.drawImage(Assets.ui_iconAttributes, 16, (int)(screenH * 0.12) + 48);
         graphics.drawImage(Assets.ui_iconSkills, 16, (int)(screenH * 0.37) + 48);
-        graphics.drawImage(Assets.ui_iconEquip, 16, (int)(screenH * 0.62) + 48);
     }
 
     @Override

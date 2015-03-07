@@ -120,6 +120,38 @@ public abstract class AndroidGame extends Activity implements Game
     }
 
     @Override
+    public Locale getLocale()
+    {
+        if(this.lang == null)
+        {
+            return Locale.ENGLISH;
+        }
+        return this.lang;
+    }
+
+    public int getRotation()
+    {
+        return getResources().getConfiguration().orientation;
+    }
+
+    @Override
+    public Player getCurrentPlayer()
+    {
+        return this.player;
+    }
+
+    @Override
+    public Player getCurrentPlayer2()
+    {
+        return this.player2;
+    }
+
+    public Screen getCurrentScreen()
+    {
+        return screen;
+    }
+
+    @Override
     public void setScreen(Screen screen)
     {
         if(screen == null)
@@ -138,38 +170,6 @@ public abstract class AndroidGame extends Activity implements Game
     public void setLocale(Locale locale)
     {
         this.lang = locale;
-    }
-
-    @Override
-    public Locale getLocale()
-    {
-        if(this.lang == null)
-        {
-            return Locale.ENGLISH;
-        }
-        return this.lang;
-    }
-
-    public Screen getCurrentScreen()
-    {
-        return screen;
-    }
-
-    public int getRotation()
-    {
-        return getResources().getConfiguration().orientation;
-    }
-
-    @Override
-    public Player getCurrentPlayer()
-    {
-        return this.player;
-    }
-
-    @Override
-    public Player getCurrentPlayer2()
-    {
-        return this.player2;
     }
 
     @Override

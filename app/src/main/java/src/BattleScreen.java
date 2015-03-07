@@ -19,14 +19,14 @@ import src.entity.ComputerPlayer;
 import src.entity.Entity;
 import src.entity.Player;
 import src.entity.Role;
+import src.mechanic.StatUnlock;
 import src.skills.Skill;
 import util.LocaleStringBuilder;
 import util.Math;
 
 public class BattleScreen extends Screen
 {
-    public int ticks = 0;
-
+    private int ticks = 0;
     private Random random = new Random();
     private Player player;
     private ComputerPlayer[] dungeonEnemies = new ComputerPlayer[10];
@@ -163,29 +163,37 @@ public class BattleScreen extends Screen
         if(player.isDead())
         {
             player.revive();
+            StatUnlock.increaseDeaths();
             game.setScreen(new MenuScreen(game));
         }
         if(enemy.isDead())
         {
             if(this.mode == 0)
             {
+                StatUnlock.increaseKills();
                 if (this.currentEnemy >= 9)
                 {
                     game.setScreen(new MenuScreen(game));
                     game.getCurrentPlayer().setAscensions(player.getAscensions() + 1);
+                    StatUnlock.increaseAscensions();
                 }
                 else
                 {
                     enemy = dungeonEnemies[++this.currentEnemy];
                 }
             }
-            else
+            else if(this.mode == 1)
             {
                 game.getCurrentPlayer().revive();
                 game.getCurrentPlayer2().revive();
                 game.setScreen(new MenuScreen(game));
             }
+            else
+            {
+                StatUnlock.increaseKills();
+            }
         }
+        StatUnlock.updateUnlocks(game);
     }
 
     @Override

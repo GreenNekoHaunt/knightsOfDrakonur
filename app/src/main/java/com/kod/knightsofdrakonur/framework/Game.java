@@ -17,21 +17,21 @@ public interface Game
 
     public Graphics getGraphics();
 
-    public void setScreen(Screen screen);
-
     public Screen getCurrentScreen();
 
     public Screen getInitScreen();
 
     public int getRotation();
 
-    public void setLocale(Locale locale);
-
     public Locale getLocale();
 
     public Player getCurrentPlayer();
 
     public Player getCurrentPlayer2();
+
+    public void setLocale(Locale locale);
+
+    public void setScreen(Screen screen);
 
     public void setCurrentPlayer(Player player);
 

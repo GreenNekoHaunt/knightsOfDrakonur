@@ -51,4 +51,10 @@ public enum Attribute
     {
         return this.localeId;
     }
+
+    /* Returns the required role for this attribute
+     *
+     * @return Role - the role that is required
+     */
+    public Role getReqRole() { return this.reqRole; }
 }

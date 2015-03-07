@@ -24,7 +24,7 @@ import util.Math;
 
 public class TitleScreen extends Screen
 {
-    public int ticks = 0;
+    private int ticks = 0;
     private String labelTapScreen;
     private String labelLogin;
     private String labelRegister;

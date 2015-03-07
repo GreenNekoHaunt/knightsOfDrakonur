@@ -19,7 +19,8 @@ public class SkillCursingAttack extends Skill
     private Buff curse;
     private int baseDuration;
 
-    SkillCursingAttack(String name, String descId, String shortDescId, Attribute attr, int baseDamage, Buff curse, int baseDuration)
+    public SkillCursingAttack(String name, String descId, String shortDescId, Attribute attr,
+                              int baseDamage, Buff curse, int baseDuration)
     {
         super(name);
         this.setDamage(baseDamage);

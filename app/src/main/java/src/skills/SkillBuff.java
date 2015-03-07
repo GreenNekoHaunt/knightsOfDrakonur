@@ -16,7 +16,7 @@ public class SkillBuff extends Skill
     private double effectiveFactor = 0;
     private Buff buff;
 
-    SkillBuff(String name, String descId, String shortDescId, Attribute attr, Buff buff,
+    public SkillBuff(String name, String descId, String shortDescId, Attribute attr, Buff buff,
               int duration)
     {
         super(name);

@@ -50,6 +50,18 @@ public class AndroidGraphics implements Graphics
     }
 
     @Override
+    public int getWidth()
+    {
+        return frameBuffer.getWidth();
+    }
+
+    @Override
+    public int getHeight()
+    {
+        return frameBuffer.getHeight();
+    }
+
+    @Override
     public Image newImage(String fileName, ImageFormat format)
     {
         Config config = null;
@@ -81,6 +93,10 @@ public class AndroidGraphics implements Graphics
             }
         }
         catch(IOException e)
+        {
+            throw new RuntimeException("Couldn\'t load bitmap from asset \'" + fileName + "\'");
+        }
+        catch(IllegalArgumentException e)
         {
             throw new RuntimeException("Couldn\'t load bitmap from asset \'" + fileName + "\'");
         }
@@ -194,18 +210,6 @@ public class AndroidGraphics implements Graphics
         editText.setDrawingCacheEnabled(true);
         Bitmap bitmap = editText.getDrawingCache();
         editText.draw(canvas);
-    }
-
-    @Override
-    public int getWidth()
-    {
-        return frameBuffer.getWidth();
-    }
-
-    @Override
-    public int getHeight()
-    {
-        return frameBuffer.getHeight();
     }
 
     public void switchSizes()

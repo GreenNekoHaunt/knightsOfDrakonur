@@ -13,7 +13,7 @@ public class SkillHeal extends Skill
 {
     private double effectiveFactor = 0;
 
-    SkillHeal(String name, String descId, String shortDescId, Attribute attr, int heal)
+    public SkillHeal(String name, String descId, String shortDescId, Attribute attr, int heal)
     {
         super(name);
         this.setDamage(heal);
@@ -49,18 +49,6 @@ public class SkillHeal extends Skill
                 * player.getAttributeStat(this.getAttribute()));
         player.heal(amount);
         player.takeMana(this.getManaCost());
-    }
-
-    @Override
-    /* Returns the name of the skill using the locales.
-     *
-     * @param Game game - the game handler.
-     *
-     * @return String - the name of the skill.
-     */
-    public String getName(Game game)
-    {
-        return (new LocaleStringBuilder(game)).addLocaleString(this.getNameId()).finalizeString();
     }
 
     @Override

@@ -13,11 +13,11 @@ import util.LocaleStringBuilder;
 public class SkillMultiAttack extends Skill
 {
     private int attacks = 0;
-    private double dimishingReturns = 1;
+    private double diminishingReturns = 1;
     private double damageFactor;
 
-    SkillMultiAttack(String name, String descId, String shortDescId, Attribute attr, int attacks,
-                     int damage)
+    public SkillMultiAttack(String name, String descId, String shortDescId, Attribute attr,
+                            int attacks, int damage)
     {
         super(name);
         this.setDamage(damage);
@@ -55,13 +55,13 @@ public class SkillMultiAttack extends Skill
                 (int)Math.round(this.damageFactor * player.getAttributeStat(this.getAttribute()));
         for(int i = 0; i < this.attacks; i++)
         {
-            if(dimishingReturns == 1)
+            if(diminishingReturns == 1)
             {
                 enemy.takeDamage(player, damage, DamageType.DIRECT);
             }
             else
             {
-                damage *= this.dimishingReturns;
+                damage *= this.diminishingReturns;
                 enemy.takeDamage(player, damage, DamageType.DIRECT);
             }
 
@@ -82,7 +82,7 @@ public class SkillMultiAttack extends Skill
                 + (int)Math.round(this.damageFactor
                 * game.getCurrentPlayer().getAttributeStat(this.getAttribute()));
         int[] damageValues = new int[this.attacks];
-        if(dimishingReturns == 1)
+        if(diminishingReturns == 1)
         {
             for(int i = 0; i < damageValues.length; i++)
             {
@@ -94,7 +94,7 @@ public class SkillMultiAttack extends Skill
             damageValues[0] = damage;
             for(int i = 1; i < this.attacks; i++)
             {
-                damageValues[i] = (int)Math.round(damageValues[0] * this.dimishingReturns);
+                damageValues[i] = (int)Math.round(damageValues[0] * this.diminishingReturns);
             }
         }
 
@@ -129,7 +129,7 @@ public class SkillMultiAttack extends Skill
                 + (int)Math.round(this.damageFactor
                 * game.getCurrentPlayer().getAttributeStat(this.getAttribute()));
         int[] damageValues = new int[this.attacks];
-        if(dimishingReturns == 1)
+        if(diminishingReturns == 1)
         {
             for(int i = 0; i < damageValues.length; i++)
             {
@@ -141,7 +141,7 @@ public class SkillMultiAttack extends Skill
             damageValues[0] = damage;
             for(int i = 1; i < this.attacks; i++)
             {
-                damageValues[i] = (int)Math.round(damageValues[0] * this.dimishingReturns);
+                damageValues[i] = (int)Math.round(damageValues[0] * this.diminishingReturns);
             }
         }
 
@@ -170,7 +170,7 @@ public class SkillMultiAttack extends Skill
      */
     public SkillMultiAttack setDiminishingReturns(double rate)
     {
-        this.dimishingReturns = rate;
+        this.diminishingReturns = rate;
         return this;
     }
 

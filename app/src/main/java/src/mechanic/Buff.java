@@ -30,9 +30,9 @@ public class Buff implements Cloneable
 
     public static Buff none = new Buff();
     public static Buff stun = (new BuffStun("lang.buff.stun.name", "lang.buff.stun.desc",
-            "lang.buff.stun.desc.short")).setIconPath("gfx/buffs/demo.png");
+            "lang.buff.stun.desc.short"));
     public static Buff bleeding = (new BuffDot("lang.buff.bleeding.name", "lang.buff.bleeding.desc",
-            "lang.buff.bleeding.desc.short", 3)).setIconPath("gfx/buffs/demo.png");
+            "lang.buff.bleeding.desc.short", 3));
     public static Buff fireBuff = (new BuffAttribute("lang.buff.firebuff.name",
             "lang.buff.firebuff.desc", "lang.buff.firebuff.desc.short", Attribute.FIRE, 3))
             .setIconPath("gfx/buffs/buffScrollFire.png");
@@ -49,6 +49,7 @@ public class Buff implements Cloneable
     public Buff()
     {
         this.id = buffCount++;
+        this.assetPath = "gfx/buffs/none.png";
         buffs.add(this);
     }
 
@@ -161,12 +162,17 @@ public class Buff implements Cloneable
         // Sets the icon.
         try
         {
-            this.icon = graphics.newImage(assetPath, Graphics.ImageFormat.RGB565);
+            this.icon = graphics.newImage(this.assetPath, Graphics.ImageFormat.RGB565);
         }
         catch(NullPointerException e)
         {
             Log.e("KOD", "Could not load buff icon for \'" + this.nameId
-                    + "\' at \'" + assetPath + "\'");
+                                 + "\' at \'" + this.assetPath + "\'");
+        }
+        catch(RuntimeException e)
+        {
+            Log.e("KOD", "Could not load buff icon for \'" + this.nameId
+                    + "\' at \'" + this.assetPath + "\'");
         }
         return this;
     }

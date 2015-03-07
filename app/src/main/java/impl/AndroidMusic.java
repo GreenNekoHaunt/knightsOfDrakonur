@@ -41,12 +41,45 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
     }
 
     @Override
-    public void dispose()
+    public void onCompletion(MediaPlayer mediaPlayer)
     {
-        if(this.mediaPlayer.isPlaying())
+        synchronized (this)
         {
-            this.mediaPlayer.stop();
+            isPrepared = false;
         }
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer)
+    {
+        synchronized (this)
+        {
+            isPrepared = true;
+        }
+    }
+
+    @Override
+    public void onSeekComplete(MediaPlayer mediaPlayer)
+    {
+
+    }
+
+    @Override
+    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int width, int height)
+    {
+
+    }
+
+    @Override
+    public void setLooping(boolean isLooping)
+    {
+        mediaPlayer.setLooping(isLooping);
+    }
+
+    @Override
+    public void setVolume(float vol)
+    {
+        mediaPlayer.setVolume(vol, vol);
     }
 
     @Override
@@ -73,6 +106,15 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
         if(this.mediaPlayer.isPlaying())
         {
             mediaPlayer.pause();
+        }
+    }
+
+    @Override
+    public void dispose()
+    {
+        if(this.mediaPlayer.isPlaying())
+        {
+            this.mediaPlayer.stop();
         }
     }
 
@@ -106,18 +148,6 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
     }
 
     @Override
-    public void setLooping(boolean isLooping)
-    {
-        mediaPlayer.setLooping(isLooping);
-    }
-
-    @Override
-    public void setVolume(float vol)
-    {
-        mediaPlayer.setVolume(vol, vol);
-    }
-
-    @Override
     public void stop()
     {
         if(this.mediaPlayer.isPlaying())
@@ -131,38 +161,8 @@ public class AndroidMusic implements Music, OnCompletionListener, OnSeekComplete
     }
 
     @Override
-    public void onCompletion(MediaPlayer mediaPlayer)
-    {
-        synchronized (this)
-        {
-            isPrepared = false;
-        }
-    }
-
-    @Override
     public void seekBegin()
     {
         mediaPlayer.seekTo(0);
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer)
-    {
-        synchronized (this)
-        {
-            isPrepared = true;
-        }
-    }
-
-    @Override
-    public void onSeekComplete(MediaPlayer mediaPlayer)
-    {
-
-    }
-
-    @Override
-    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int width, int height)
-    {
-
     }
 }

@@ -82,7 +82,7 @@ public class SkillScreen extends Screen
                 if(Math.inBoundary(touchEvent, 0, 0, screenW - 48, 1152))
                 {
                     int skillSelected = ((touchEvent.y + internScrollBarPos) / 128);
-                    if (skillSelected < Skill.skillCount)
+                    if (skillSelected < player.getLearnedSkillsAmount())
                     {
                         if (player.isSkillEquipped(unlockedSkills.get(skillSelected)))
                         {

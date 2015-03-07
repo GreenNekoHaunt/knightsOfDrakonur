@@ -25,7 +25,7 @@ public class Entity
 {
     protected HashMap<Attribute, Integer> attributes = new HashMap<Attribute, Integer>();
     protected final int baseResource = 6;
-    protected final int baseVitality = 56;
+    protected final int baseVitality = 28;
     protected final int[] slotUnlocks = new int[]{1, 2, 3, 5, 8, 12};
     protected final int secondaryRoleUnlockLevel = 16;
     protected ArrayList<ActiveBuff> buffs = new ArrayList<ActiveBuff>();
@@ -42,7 +42,7 @@ public class Entity
     private int totalMana;
     private int health;
     private int mana;
-    private Skill slots[] = new Skill[6];
+    private Skill[] slots = new Skill[6];
     private boolean dead;
     private boolean stunned;
 
